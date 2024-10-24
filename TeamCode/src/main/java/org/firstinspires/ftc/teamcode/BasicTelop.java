@@ -116,9 +116,14 @@ public class BasicTelop extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+        //input states
+        boolean lb1Pressed = false;
+        boolean rb1Pressed = false;
 
         double vslidesPower = 0;
         double hslidesPower = 0;
+        int intakeDirection = 1;
+        boolean intakeOn = false;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -175,11 +180,13 @@ public class BasicTelop extends LinearOpMode {
             if(gamepad2.left_trigger > 0.01 && gamepad2.right_trigger > 0.01) vslidesPower = 0;
             else if(gamepad2.left_trigger > 0.01) vslidesPower = gamepad2.left_trigger;
             else if(gamepad2.right_trigger > 0.01) vslidesPower = -gamepad2.right_trigger;
+            else vslidesPower = 0;
 
             //horizontal slides control
             if(gamepad1.left_trigger > 0.01 && gamepad1.right_trigger > 0.01) hslidesPower = 0;
             else if(gamepad1.left_trigger > 0.01) hslidesPower = gamepad1.left_trigger;
             else if(gamepad1.right_trigger > 0.01) hslidesPower = -gamepad1.right_trigger;
+            else hslidesPower = 0;
 
             //slides power
             hslidesMotor.setPower(hslidesPower);
@@ -190,6 +197,18 @@ public class BasicTelop extends LinearOpMode {
             if(gamepad2.dpad_up) pivotMotor.setPower(pivotSpeed);
             if(gamepad2.dpad_down) pivotMotor.setPower(-pivotSpeed);
             if(!gamepad2.dpad_down && !gamepad2.dpad_up) pivotMotor.setPower(0);
+
+            //motor intake
+            double intakeSpeed = 0.5;
+            if(gamepad1.left_bumper && !lb1Pressed) intakeDirection *= -1;
+            if(gamepad1.right_bumper && !rb1Pressed) intakeOn = !intakeOn;
+
+            if(intakeOn) intakeMotor.setPower(intakeDirection * intakeSpeed);
+            else intakeMotor.setPower(0);
+
+            lb1Pressed = gamepad1.left_bumper;
+            rb1Pressed = gamepad1.right_bumper;
+
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
