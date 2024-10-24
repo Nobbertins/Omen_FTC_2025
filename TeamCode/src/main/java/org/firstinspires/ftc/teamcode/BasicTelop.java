@@ -64,7 +64,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="Basic: Telop", group="Linear OpMode")
-@Disabled
 public class BasicTelop extends LinearOpMode {
 
     // Declare OpMode members for each of the 4 motors.
@@ -83,10 +82,10 @@ public class BasicTelop extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "left_front_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        leftFrontDrive  = hardwareMap.get(DcMotor.class, "fl");
+        leftBackDrive  = hardwareMap.get(DcMotor.class, "bl");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "fr");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "br");
         intakeMotor  = hardwareMap.get(DcMotor.class, "intake");
         hslidesMotor  = hardwareMap.get(DcMotor.class, "hslides");
         vslidesMotor = hardwareMap.get(DcMotor.class, "vslides");
@@ -190,6 +189,7 @@ public class BasicTelop extends LinearOpMode {
             double pivotSpeed = 0.5;
             if(gamepad2.dpad_up) pivotMotor.setPower(pivotSpeed);
             if(gamepad2.dpad_down) pivotMotor.setPower(-pivotSpeed);
+            if(!gamepad2.dpad_down && !gamepad2.dpad_up) pivotMotor.setPower(0);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
