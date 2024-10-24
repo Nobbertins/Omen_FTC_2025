@@ -73,6 +73,10 @@ public class BasicTelop extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private DcMotor intakeMotor = null;
+    private DcMotor hslidesMotor = null;
+    private DcMotor vslidesMotor = null;
+    private DcMotor pivotMotor = null;
 
     @Override
     public void runOpMode() {
@@ -83,6 +87,10 @@ public class BasicTelop extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        intakeMotor  = hardwareMap.get(DcMotor.class, "intake");
+        hslidesMotor  = hardwareMap.get(DcMotor.class, "hslides");
+        vslidesMotor = hardwareMap.get(DcMotor.class, "vslides");
+        pivotMotor = hardwareMap.get(DcMotor.class, "pivot");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -98,6 +106,10 @@ public class BasicTelop extends LinearOpMode {
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+        vslidesMotor.setDirection(DcMotor.Direction.FORWARD);
+        hslidesMotor.setDirection(DcMotor.Direction.FORWARD);
+        pivotMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -106,6 +118,8 @@ public class BasicTelop extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        double vslidesPower = 0;
+        double hslidesPower = 0;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -158,6 +172,24 @@ public class BasicTelop extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower);
             rightBackDrive.setPower(rightBackPower);
 
+            //vertical slides control
+            if(gamepad2.left_trigger > 0.01 && gamepad2.right_trigger > 0.01) vslidesPower = 0;
+            else if(gamepad2.left_trigger > 0.01) vslidesPower = gamepad2.left_trigger;
+            else if(gamepad2.right_trigger > 0.01) vslidesPower = -gamepad2.right_trigger;
+
+            //horizontal slides control
+            if(gamepad1.left_trigger > 0.01 && gamepad1.right_trigger > 0.01) hslidesPower = 0;
+            else if(gamepad1.left_trigger > 0.01) hslidesPower = gamepad1.left_trigger;
+            else if(gamepad1.right_trigger > 0.01) hslidesPower = -gamepad1.right_trigger;
+
+            //slides power
+            hslidesMotor.setPower(hslidesPower);
+            vslidesMotor.setPower(vslidesPower);
+
+            //pivot motor
+            double pivotSpeed = 0.5;
+            if(gamepad2.dpad_up) pivotMotor.setPower(pivotSpeed);
+            if(gamepad2.dpad_down) pivotMotor.setPower(-pivotSpeed);
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
