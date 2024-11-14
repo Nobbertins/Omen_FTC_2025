@@ -32,7 +32,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -77,6 +80,17 @@ public class BasicTelop extends LinearOpMode {
     private DcMotor vslidesMotor = null;
     private DcMotor pivotMotor = null;
 
+    private CRServo transfer = null;
+    private CRServo hand1 = null;
+
+    private CRServo hand2 = null;
+    private Servo intakeDropM = null;
+    private Servo hlockM = null;
+    private Servo larmM = null;
+    private Servo rarmM = null;
+    private Servo elbowM = null;
+
+
     @Override
     public void runOpMode() {
 
@@ -90,6 +104,14 @@ public class BasicTelop extends LinearOpMode {
         hslidesMotor  = hardwareMap.get(DcMotor.class, "hslides");
         vslidesMotor = hardwareMap.get(DcMotor.class, "vslides");
         pivotMotor = hardwareMap.get(DcMotor.class, "pivot");
+        transfer = hardwareMap.get(CRServo.class, "transfer");
+        hand1 = hardwareMap.get(CRServo.class, "hand1");
+        hand2 = hardwareMap.get(CRServo.class, "hand2");
+        intakeDropM = hardwareMap.get(Servo.class, "intakeDrop");
+        hlockM = hardwareMap.get(Servo.class, "hlock");
+        larmM = hardwareMap.get(Servo.class, "larm");
+        rarmM = hardwareMap.get(Servo.class, "rarm");
+        elbowM = hardwareMap.get(Servo.class, "elbow");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -109,6 +131,15 @@ public class BasicTelop extends LinearOpMode {
         vslidesMotor.setDirection(DcMotor.Direction.FORWARD);
         hslidesMotor.setDirection(DcMotor.Direction.FORWARD);
         pivotMotor.setDirection(DcMotor.Direction.FORWARD);
+        transfer.setDirection(DcMotorSimple.Direction.FORWARD);
+        hand1.setDirection(DcMotorSimple.Direction.FORWARD);
+        hand2.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        ToggleServo intakeDrop = new ToggleServo(intakeDropM, 0, 100, Servo.Direction.FORWARD);
+        ToggleServo hlock = new ToggleServo(hlockM, 0, 100, Servo.Direction.FORWARD);
+        ToggleServo larm = new ToggleServo(larmM, 0, 100, Servo.Direction.FORWARD);
+        ToggleServo rarm = new ToggleServo(rarmM, 0, 100, Servo.Direction.FORWARD);
+        ToggleServo elbow = new ToggleServo(elbowM, 0, 100, Servo.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -119,6 +150,8 @@ public class BasicTelop extends LinearOpMode {
         //input states
         boolean lb1Pressed = false;
         boolean rb1Pressed = false;
+        boolean b1Pressed = false;
+        boolean a1Pressed = false;
 
         double vslidesPower = 0;
         double hslidesPower = 0;
@@ -177,9 +210,9 @@ public class BasicTelop extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower);
 
             //vertical slides control
-            if(gamepad2.left_trigger > 0.01 && gamepad2.right_trigger > 0.01) vslidesPower = 0;
-            else if(gamepad2.left_trigger > 0.01) vslidesPower = gamepad2.left_trigger;
-            else if(gamepad2.right_trigger > 0.01) vslidesPower = -gamepad2.right_trigger;
+            if(gamepad2.left_trigger > 0 && gamepad2.right_trigger > 0) vslidesPower = 0;
+            else if(gamepad2.left_trigger > 0) vslidesPower = gamepad2.left_trigger;
+            else if(gamepad2.right_trigger > 0) vslidesPower = -gamepad2.right_trigger;
             else vslidesPower = 0;
 
             //horizontal slides control
@@ -208,6 +241,11 @@ public class BasicTelop extends LinearOpMode {
 
             lb1Pressed = gamepad1.left_bumper;
             rb1Pressed = gamepad1.right_bumper;
+
+            if(gamepad1.b && !b1Pressed) transfer.setPower(1.0);
+            b1Pressed = gamepad1.b;
+            if(gamepad1.a && !a1Pressed) intakeDrop.toggle();
+            a1Pressed = gamepad1.a;
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
