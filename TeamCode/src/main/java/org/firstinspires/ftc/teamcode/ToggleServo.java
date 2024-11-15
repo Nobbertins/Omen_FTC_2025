@@ -2,27 +2,26 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
-
+import java.util.ArrayList;
 public class ToggleServo{
     private Servo servo;
-    private int angle1;
-    private int angle2;
-    private boolean pos;
-    public ToggleServo(Servo s, int angle1, int angle2, Servo.Direction direction){
+    private ArrayList<Integer> angles = new ArrayList<>();
+    private int anglesLength;
+    private int pos;
+    public ToggleServo(Servo s, int[] states, Servo.Direction direction){
         this.servo = s;
-        this.angle1 = angle1;
-        this.angle2 = angle2;
-        this.pos = false;
+        this.anglesLength = states.length;
+        for(int i = 0; i < this.anglesLength; i++){
+            this.angles.add(states[i]);
+        }
+        this.pos = 0;
         this.servo.setDirection(direction);
+        this.servo.setPosition(angles.get(0) / 355.0);
     }
     public void toggle(){
-        if(this.pos) {
-            this.servo.setPosition(angle1 / 355.0);
-        }
-        else{
-            this.servo.setPosition(angle2 / 355.0);
-        }
-        this.pos = !this.pos;
+        this.pos++;
+        if(this.pos == this.anglesLength) this.pos = 0;
+        this.servo.setPosition(angles.get(this.pos) / 355.0);
     }
     public Servo getServo(){return this.servo;}
 }

@@ -94,16 +94,16 @@ public class BasicTelop extends LinearOpMode {
         vslidesMotor.setDirection(DcMotor.Direction.FORWARD);
         hslidesMotor.setDirection(DcMotor.Direction.FORWARD);
         pivotMotor.setDirection(DcMotor.Direction.FORWARD);
-        transfer.setDirection(DcMotorSimple.Direction.FORWARD);
+        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
         hand1.setDirection(DcMotorSimple.Direction.FORWARD);
-        hand2.setDirection(DcMotorSimple.Direction.FORWARD);
+        hand2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        //initialize toggle servos (servos that go between angles at the press of a button)a
-        ToggleServo intakeDrop = new ToggleServo(intakeDropM, 0, 100, Servo.Direction.FORWARD);
-        ToggleServo hlock = new ToggleServo(hlockM, 0, 100, Servo.Direction.FORWARD);
-        ToggleServo larm = new ToggleServo(larmM, 0, 100, Servo.Direction.FORWARD);
-        ToggleServo rarm = new ToggleServo(rarmM, 0, 100, Servo.Direction.FORWARD);
-        ToggleServo elbow = new ToggleServo(elbowM, 0, 100, Servo.Direction.FORWARD);
+        //initialize toggle servos (servos that go between angles at the press of a button)
+        ToggleServo intakeDrop = new ToggleServo(intakeDropM, new int[]{0, 40}, Servo.Direction.FORWARD);
+        ToggleServo hlock = new ToggleServo(hlockM, new int[]{0, 40}, Servo.Direction.REVERSE);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{355, 40}, Servo.Direction.REVERSE);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{355, 40}, Servo.Direction.FORWARD);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{0, 40}, Servo.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -137,8 +137,10 @@ public class BasicTelop extends LinearOpMode {
         //other variables used in teleop
         double vslidesPower = 0;
         double hslidesPower = 0;
+        double handPower = 0;
         int intakeDirection = 1;
         boolean intakeOn = false;
+        boolean intakeSuckOn = false;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -200,13 +202,33 @@ public class BasicTelop extends LinearOpMode {
             if(gamepad1.left_bumper && !lb1Pressed) intakeDirection *= -1;
             if(gamepad1.right_bumper && !rb1Pressed) intakeOn = !intakeOn;
 
-            if(intakeOn) intakeMotor.setPower(intakeDirection * intakeSpeed);
-            else intakeMotor.setPower(0);
+            if(intakeOn){
+                intakeMotor.setPower(intakeDirection * intakeSpeed);
+                transfer.setPower(1.0);
+            }
+            else{
+                intakeMotor.setPower(0);
+                transfer.setPower(0);
+            }
 
-            //intake and transfer servos
-            if(gamepad1.b && !b1Pressed) transfer.setPower(1.0);
+            //toggle servos inputs
             if(gamepad1.a && !a1Pressed) intakeDrop.toggle();
-
+            if(gamepad1.x && !x1Pressed) hlock.toggle();
+            if(gamepad2.y && !y2Pressed){
+                larm.toggle();
+                rarm.toggle();
+            }
+            if(gamepad2.b && !b2Pressed) elbow.toggle();
+            if(gamepad2.x && !x2Pressed) {
+                if(handPower != 1.0) handPower = 1.0;
+                else handPower = 0.0;
+            }
+            if(gamepad2.a && !a2Pressed){
+                if(handPower != -1.0) handPower = -1.0;
+                else handPower = 0.0;
+            }
+            hand1.setPower(handPower);
+            hand2.setPower(handPower);
             //update all button states
             b1Pressed = gamepad1.b;
             a1Pressed = gamepad1.a;
