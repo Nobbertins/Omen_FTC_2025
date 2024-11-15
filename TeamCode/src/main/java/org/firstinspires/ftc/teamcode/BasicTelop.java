@@ -38,38 +38,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/*
- * This file contains an example of a Linear "OpMode".
- * An OpMode is a 'program' that runs in either the autonomous or the teleop period of an FTC match.
- * The names of OpModes appear on the menu of the FTC Driver Station.
- * When a selection is made from the menu, the corresponding OpMode is executed.
- *
- * This particular OpMode illustrates driving a 4-motor Omni-Directional (or Holonomic) robot.
- * This code will work with either a Mecanum-Drive or an X-Drive train.
- * Both of these drives are illustrated at https://gm0.org/en/latest/docs/robot-design/drivetrains/holonomic.html
- * Note that a Mecanum drive must display an X roller-pattern when viewed from above.
- *
- * Also note that it is critical to set the correct rotation direction for each motor.  See details below.
- *
- * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
- * Each motion axis is controlled by one Joystick axis.
- *
- * 1) Axial:    Driving forward and backward               Left-joystick Forward/Backward
- * 2) Lateral:  Strafing right and left                     Left-joystick Right and Left
- * 3) Yaw:      Rotating Clockwise and counter clockwise    Right-joystick Right and Left
- *
- * This code is written assuming that the right-side motors need to be reversed for the robot to drive forward.
- * When you first test your robot, if it moves backward when you push the left stick forward, then you must flip
- * the direction of all 4 motors (see code below).
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
- */
-
 @TeleOp(name="Basic: Telop", group="Linear OpMode")
 public class BasicTelop extends LinearOpMode {
 
-    // Declare OpMode members for each of the 4 motors.
+    // Declare OpMode members for each motor
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -113,16 +85,7 @@ public class BasicTelop extends LinearOpMode {
         rarmM = hardwareMap.get(Servo.class, "rarm");
         elbowM = hardwareMap.get(Servo.class, "elbow");
 
-        // ########################################################################################
-        // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
-        // ########################################################################################
-        // Most robots need the motors on one side to be reversed to drive forward.
-        // The motor reversals shown here are for a "direct drive" robot (the wheels turn the same direction as the motor shaft)
-        // If your robot has additional gear reductions or uses a right-angled drive, it's important to ensure
-        // that your motors are turning in the correct direction.  So, start out with the reversals here, BUT
-        // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
-        // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
-        // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
+        //initialize motor directions
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -135,6 +98,7 @@ public class BasicTelop extends LinearOpMode {
         hand1.setDirection(DcMotorSimple.Direction.FORWARD);
         hand2.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        //initialize toggle servos (servos that go between angles at the press of a button)a
         ToggleServo intakeDrop = new ToggleServo(intakeDropM, 0, 100, Servo.Direction.FORWARD);
         ToggleServo hlock = new ToggleServo(hlockM, 0, 100, Servo.Direction.FORWARD);
         ToggleServo larm = new ToggleServo(larmM, 0, 100, Servo.Direction.FORWARD);
@@ -147,12 +111,30 @@ public class BasicTelop extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
-        //input states
+        //previous button states
         boolean lb1Pressed = false;
         boolean rb1Pressed = false;
         boolean b1Pressed = false;
         boolean a1Pressed = false;
+        boolean x1Pressed = false;
+        boolean y1Pressed = false;
+        boolean down1Pressed = false;
+        boolean up1Pressed = false;
+        boolean right1Pressed = false;
+        boolean left1Pressed = false;
 
+        boolean lb2Pressed = false;
+        boolean rb2Pressed = false;
+        boolean b2Pressed = false;
+        boolean a2Pressed = false;
+        boolean x2Pressed = false;
+        boolean y2Pressed = false;
+        boolean down2Pressed = false;
+        boolean up2Pressed = false;
+        boolean right2Pressed = false;
+        boolean left2Pressed = false;
+
+        //other variables used in teleop
         double vslidesPower = 0;
         double hslidesPower = 0;
         int intakeDirection = 1;
@@ -178,30 +160,12 @@ public class BasicTelop extends LinearOpMode {
             max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
             max = Math.max(max, Math.abs(leftBackPower));
             max = Math.max(max, Math.abs(rightBackPower));
-
             if (max > 1.0) {
                 leftFrontPower  /= max;
                 rightFrontPower /= max;
                 leftBackPower   /= max;
                 rightBackPower  /= max;
             }
-
-            // This is test code:
-            //
-            // Uncomment the following code to test your motor directions.
-            // Each button should make the corresponding motor run FORWARD.
-            //   1) First get all the motors to take to correct positions on the robot
-            //      by adjusting your Robot Configuration if necessary.
-            //   2) Then make sure they run in the correct direction by modifying the
-            //      the setDirection() calls above.
-            // Once the correct motors move in the correct direction re-comment this code.
-
-            /*
-            leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
-            leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
-            rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
-            rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
@@ -239,13 +203,32 @@ public class BasicTelop extends LinearOpMode {
             if(intakeOn) intakeMotor.setPower(intakeDirection * intakeSpeed);
             else intakeMotor.setPower(0);
 
+            //intake and transfer servos
+            if(gamepad1.b && !b1Pressed) transfer.setPower(1.0);
+            if(gamepad1.a && !a1Pressed) intakeDrop.toggle();
+
+            //update all button states
+            b1Pressed = gamepad1.b;
+            a1Pressed = gamepad1.a;
+            x1Pressed = gamepad1.x;
+            y1Pressed = gamepad1.y;
+            down1Pressed = gamepad1.dpad_down;
+            up1Pressed = gamepad1.dpad_up;
+            left1Pressed = gamepad1.dpad_left;
+            right1Pressed = gamepad1.dpad_right;
             lb1Pressed = gamepad1.left_bumper;
             rb1Pressed = gamepad1.right_bumper;
 
-            if(gamepad1.b && !b1Pressed) transfer.setPower(1.0);
-            b1Pressed = gamepad1.b;
-            if(gamepad1.a && !a1Pressed) intakeDrop.toggle();
-            a1Pressed = gamepad1.a;
+            b2Pressed = gamepad2.b;
+            a2Pressed = gamepad2.a;
+            x2Pressed = gamepad2.x;
+            y2Pressed = gamepad2.y;
+            down2Pressed = gamepad2.dpad_down;
+            up2Pressed = gamepad2.dpad_up;
+            left2Pressed = gamepad2.dpad_left;
+            right2Pressed = gamepad2.dpad_right;
+            lb2Pressed = gamepad2.left_bumper;
+            rb2Pressed = gamepad2.right_bumper;
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

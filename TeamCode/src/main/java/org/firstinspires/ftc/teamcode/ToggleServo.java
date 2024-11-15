@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class ToggleServo{
@@ -12,7 +13,6 @@ public class ToggleServo{
         this.angle1 = angle1;
         this.angle2 = angle2;
         this.pos = false;
-
         this.servo.setDirection(direction);
     }
     public void toggle(){
