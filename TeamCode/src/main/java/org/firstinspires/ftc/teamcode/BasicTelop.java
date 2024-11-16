@@ -101,9 +101,9 @@ public class BasicTelop extends LinearOpMode {
         //initialize toggle servos (servos that go between angles at the press of a button)
         ToggleServo intakeDrop = new ToggleServo(intakeDropM, new int[]{0, 40}, Servo.Direction.FORWARD);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{0, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{355, 40}, Servo.Direction.REVERSE);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{355, 40}, Servo.Direction.FORWARD);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{0, 40}, Servo.Direction.FORWARD);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{340, 225}, Servo.Direction.REVERSE);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{340, 225}, Servo.Direction.FORWARD);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{270, 75}, Servo.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -198,12 +198,12 @@ public class BasicTelop extends LinearOpMode {
             if(!gamepad2.dpad_down && !gamepad2.dpad_up) pivotMotor.setPower(0);
 
             //motor intake
-            double intakeSpeed = 0.5;
+            double intakeSpeed = 1.0;
             if(gamepad1.left_bumper && !lb1Pressed) intakeDirection *= -1;
             if(gamepad1.right_bumper && !rb1Pressed) intakeOn = !intakeOn;
 
             if(intakeOn){
-                intakeMotor.setPower(intakeDirection * intakeSpeed);
+                intakeMotor.setPower(intakeDirection > 0 ? intakeDirection * intakeSpeed : intakeDirection * 0.6);
                 transfer.setPower(1.0);
             }
             else{
