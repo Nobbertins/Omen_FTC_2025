@@ -98,6 +98,8 @@ public class BasicTelop extends LinearOpMode {
         hand1.setDirection(DcMotorSimple.Direction.FORWARD);
         hand2.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        pivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         //initialize toggle servos (servos that go between angles at the press of a button)
         ToggleServo intakeDrop = new ToggleServo(intakeDropM, new int[]{0, 40}, Servo.Direction.FORWARD);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{0, 40}, Servo.Direction.REVERSE);
@@ -141,6 +143,9 @@ public class BasicTelop extends LinearOpMode {
         int intakeDirection = 1;
         boolean intakeOn = false;
         boolean intakeSuckOn = false;
+        int[] pivotStates = {0, 200, 400, 600};
+        int numPivotStates = pivotStates.length;
+        int pivotState = 0;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -191,11 +196,11 @@ public class BasicTelop extends LinearOpMode {
             hslidesMotor.setPower(hslidesPower);
             vslidesMotor.setPower(vslidesPower);
 
-            //pivot motor
-            double pivotSpeed = 0.5;
-            if(gamepad2.dpad_up) pivotMotor.setPower(pivotSpeed);
-            if(gamepad2.dpad_down) pivotMotor.setPower(-pivotSpeed);
-            if(!gamepad2.dpad_down && !gamepad2.dpad_up) pivotMotor.setPower(0);
+            //pivot motor direct control
+//            double pivotSpeed = 0.5;
+//            if(gamepad2.dpad_up) pivotMotor.setPower(pivotSpeed);
+//            if(gamepad2.dpad_down) pivotMotor.setPower(-pivotSpeed);
+//            if(!gamepad2.dpad_down && !gamepad2.dpad_up) pivotMotor.setPower(0);
 
             //motor intake
             double intakeSpeed = 1.0;
@@ -229,6 +234,18 @@ public class BasicTelop extends LinearOpMode {
             }
             hand1.setPower(handPower);
             hand2.setPower(handPower);
+
+            if(gamepad2.dpad_down && !down2Pressed) {
+                pivotState++;
+                if(pivotState == numPivotStates) pivotState = 0;
+            }
+            if(gamepad2.dpad_up && !up2Pressed) {
+                pivotState--;
+                if(pivotState == -1) pivotState = 0;
+            }
+            pivotMotor.setTargetPosition(pivotStates[pivotState]);
+            pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             //update all button states
             b1Pressed = gamepad1.b;
             a1Pressed = gamepad1.a;
