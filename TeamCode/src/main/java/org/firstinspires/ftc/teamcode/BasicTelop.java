@@ -142,7 +142,7 @@ public class BasicTelop extends LinearOpMode {
         double vslidesPower = 0;
         double hslidesPower = 0;
         double handPower = 0;
-        int intakeDirection = 1;
+        int intakeDirection = -1;
         boolean intakeOn = false;
         boolean intakeSuckOn = false;
         int[] pivotStates = {0, -40, -80, -120, -160, -200};
@@ -153,7 +153,7 @@ public class BasicTelop extends LinearOpMode {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
+            double axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
             double yaw     =  gamepad1.right_stick_x;
 
