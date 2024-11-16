@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
-public class forwardPark extends LinearOpMode {
+public class strafeLeftPark extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -31,25 +31,17 @@ public class forwardPark extends LinearOpMode {
         waitForStart();
         runtime.reset();
         double speed = 0.5;
-        double phase2Offset = 0;
         while(opModeIsActive()) {
             //strafe left
-//            leftFrontDrive.setPower(-speed);
-//            rightBackDrive.setPower(-speed);
-//            leftBackDrive.setPower(speed);
-//            rightFrontDrive.setPower(speed);
-            leftFrontDrive.setPower(speed + phase2Offset);
-            rightBackDrive.setPower(speed - phase2Offset);
-            leftBackDrive.setPower(speed + phase2Offset);
-            rightFrontDrive.setPower(speed - phase2Offset);
+            leftFrontDrive.setPower(-speed);
+            rightBackDrive.setPower(-speed);
+            leftBackDrive.setPower(speed);
+            rightFrontDrive.setPower(speed);
             telemetry.addData("Elapsed Time", runtime.seconds());
             telemetry.update();
 
             // Break after 3 seconds as an example
-            if (runtime.seconds() > 1) {
-                phase2Offset = 0.2;
-            }
-            if (runtime.seconds() > 2) {
+            if (runtime.seconds() > 1.3) {
                 break;
             }
         }
