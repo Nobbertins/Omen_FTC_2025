@@ -49,7 +49,7 @@ public class forwardPark extends LinearOpMode {
             if (runtime.seconds() > 1) {
                 phase2Offset = 0.2;
             }
-            if (runtime.seconds() > 1.5) {
+            if (runtime.seconds() > 2) {
                 break;
             }
         }
