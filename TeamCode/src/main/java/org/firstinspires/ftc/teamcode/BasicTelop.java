@@ -148,6 +148,7 @@ public class BasicTelop extends LinearOpMode {
         int[] pivotStates = {0, -40, -80, -120, -160, -200};
         int numPivotStates = pivotStates.length;
         int pivotState = 0;
+        double driveSensitivity = 1;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -175,12 +176,13 @@ public class BasicTelop extends LinearOpMode {
                 leftBackPower   /= max;
                 rightBackPower  /= max;
             }
-
+            if(gamepad1.left_bumper && gamepad1.right_bumper) driveSensitivity = 0.4;
+            else driveSensitivity = 1;
             // Send calculated power to wheels
-            leftFrontDrive.setPower(leftFrontPower);
-            rightFrontDrive.setPower(rightFrontPower);
-            leftBackDrive.setPower(leftBackPower);
-            rightBackDrive.setPower(rightBackPower);
+            leftFrontDrive.setPower(leftFrontPower * driveSensitivity);
+            rightFrontDrive.setPower(rightFrontPower * driveSensitivity);
+            leftBackDrive.setPower(leftBackPower * driveSensitivity);
+            rightBackDrive.setPower(rightBackPower * driveSensitivity);
 
             //vertical slides control
             if(gamepad2.left_trigger > 0 && gamepad2.right_trigger > 0) vslidesPower = 0.1;
