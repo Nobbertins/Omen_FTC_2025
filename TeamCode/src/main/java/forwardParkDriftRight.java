@@ -30,6 +30,7 @@ public class forwardParkDriftRight extends LinearOpMode {
         pivotMotor.setTargetPosition(0);
         pivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pivotMotor.setPower(1.0);
+        //good
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();

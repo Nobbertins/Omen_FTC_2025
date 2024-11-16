@@ -22,6 +22,7 @@ public class strafeRightPark extends LinearOpMode {
         pivotMotor = hardwareMap.get(DcMotor.class, "pivot");
 
         //initialize motor directions
+        //good
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
