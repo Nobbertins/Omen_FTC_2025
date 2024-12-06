@@ -108,8 +108,8 @@ public class BasicTelop extends LinearOpMode {
         ToggleServo larm = new ToggleServo(larmM, new int[]{250, 245, 225, 120, 110}, Servo.Direction.REVERSE, 340);
         ToggleServo rarm = new ToggleServo(rarmM, new int[]{250, 245, 225, 120, 110}, Servo.Direction.FORWARD, 340);
         ToggleServo elbow = new ToggleServo(elbowM, new int[]{350, 0, 75, 65, 225}, Servo.Direction.FORWARD, 270);
-        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{60, 200}, Servo.Direction.FORWARD, 0);
-        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{60, 200}, Servo.Direction.FORWARD, 0);
+        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{0, 60}, Servo.Direction.FORWARD);
+        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{0, 60}, Servo.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
