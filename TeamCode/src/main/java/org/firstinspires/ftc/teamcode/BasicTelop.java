@@ -108,6 +108,8 @@ public class BasicTelop extends LinearOpMode {
         ToggleServo larm = new ToggleServo(larmM, new int[]{250, 245, 225, 120, 110}, Servo.Direction.REVERSE, 340);
         ToggleServo rarm = new ToggleServo(rarmM, new int[]{250, 245, 225, 120, 110}, Servo.Direction.FORWARD, 340);
         ToggleServo elbow = new ToggleServo(elbowM, new int[]{350, 0, 75, 65, 225}, Servo.Direction.FORWARD, 270);
+        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{60, 200}, Servo.Direction.FORWARD, 0);
+        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{60, 200}, Servo.Direction.FORWARD, 0);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -139,7 +141,9 @@ public class BasicTelop extends LinearOpMode {
         boolean left2Pressed = false;
 
         //other variables used in teleop
-        double vslidesPower = 0;
+        // added rslidesPower and lslidesPower
+        double rslidesPower= 0;
+        double lslidesPower = 0;
         double hslidesPower = 0;
         double handPower = 0;
         int intakeDirection = -1;
@@ -182,10 +186,19 @@ public class BasicTelop extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower * driveSensitivity);
 
             //vertical slides control
-            if(gamepad2.left_trigger > 0 && gamepad2.right_trigger > 0) vslidesPower = 0.1;
-            else if(gamepad2.left_trigger > 0) vslidesPower = gamepad2.left_trigger;
-            else if(gamepad2.right_trigger > 0) vslidesPower = -gamepad2.right_trigger;
-            else vslidesPower = 0.1;
+            if(gamepad2.left_trigger > 0 && gamepad2.right_trigger > 0){
+                rslidesPower = 0.1;
+                lslidesPower = 0.1;
+            }
+            else if(gamepad2.left_trigger > 0){
+                rslidesPower = gamepad2.left_trigger;
+                lslidesPower = gamepad2.left_trigger;
+            }
+
+            else {
+                rslidesPower = 0.1;
+                lslidesPower = 0.1;
+            }
 
             //horizontal slides control
             if(gamepad1.left_trigger > 0.01 && gamepad1.right_trigger > 0.01) hslidesPower = 0;
@@ -235,12 +248,16 @@ public class BasicTelop extends LinearOpMode {
             }
 
             if(gamepad2.dpad_down && !down2Pressed) {
-                lpivot.setPosition(0);
-                rpivot.setPosition(0);
+                lpivotM.toggleRight();
+                rpivotM.toggleRight();
+//                lpivot.setPosition(0);
+//                rpivot.setPosition(0);
             }
             if(gamepad2.dpad_up && !up2Pressed) {
-                lpivot.setPosition(90);
-                rpivot.setPosition(0);
+                rpivotM.toggleLeft();
+                lpivotM.toggleLeft();
+//                lpivot.setPosition(90);
+//                rpivot.setPosition(0);
             }
 
             //update all button states
