@@ -209,12 +209,6 @@ public class BasicTelop extends LinearOpMode {
             //slides power
             hslidesMotor.setPower(hslidesPower);
 
-            //pivot motor direct control
-//            double pivotSpeed = 0.5;
-//            if(gamepad2.dpad_up) pivotMotor.setPower(pivotSpeed);
-//            if(gamepad2.dpad_down) pivotMotor.setPower(-pivotSpeed);
-//            if(!gamepad2.dpad_down && !gamepad2.dpad_up) pivotMotor.setPower(0);
-
             //motor intake
             double intakeSpeed = 1.0;
             if(gamepad1.left_bumper && !lb1Pressed) intakeDirection *= -1;
