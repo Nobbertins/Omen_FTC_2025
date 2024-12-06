@@ -63,7 +63,7 @@ public class SampleCollectionAuto extends LinearOpMode {
                 .turn(Math.toRadians(90))
                 .waitSeconds(0.5)  // Time for outtake
 
-                // Move to second samples
+                // Move to second sample
                 .strafeTo(SAMPLE_2)
                 .turn(Math.toRadians(0))
                 .waitSeconds(0.5)  // Time for intake
