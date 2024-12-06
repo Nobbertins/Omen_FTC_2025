@@ -77,7 +77,7 @@ public class BasicTelop extends LinearOpMode {
         intakeMotor  = hardwareMap.get(DcMotor.class, "intake");
         lslidesMotor  = hardwareMap.get(DcMotor.class, "lslides");
         rslidesMotor  = hardwareMap.get(DcMotor.class, "rslides");
-        //hslidesMotor  = hardwareMap.get(DcMotor.class, "hslides");
+        hslidesMotor  = hardwareMap.get(DcMotor.class, "hslides");
         //vslidesMotor = hardwareMap.get(DcMotor.class, "vslides");
         transfer = hardwareMap.get(CRServo.class, "transfer");
         rpivot = hardwareMap.get(Servo.class, "rpivot");
@@ -108,8 +108,8 @@ public class BasicTelop extends LinearOpMode {
         ToggleServo larm = new ToggleServo(larmM, new int[]{250, 245, 225, 120, 110}, Servo.Direction.REVERSE, 340);
         ToggleServo rarm = new ToggleServo(rarmM, new int[]{250, 245, 225, 120, 110}, Servo.Direction.FORWARD, 340);
         ToggleServo elbow = new ToggleServo(elbowM, new int[]{350, 0, 75, 65, 225}, Servo.Direction.FORWARD, 270);
-        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{0, 60}, Servo.Direction.FORWARD);
-        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{0, 60}, Servo.Direction.FORWARD);
+        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{0, 60}, Servo.Direction.REVERSE);
+        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{0, 60}, Servo.Direction.REVERSE);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -284,9 +284,10 @@ public class BasicTelop extends LinearOpMode {
             telemetry.addData("ArmL", larm.getServo().getPosition());
             telemetry.addData("ArmR", rarm.getServo().getPosition());
             telemetry.addData("Elbow", elbow.getServo().getPosition());
-            telemetry.addData("larm", larm.pos);
-            telemetry.addData("rarm", elbow.pos);
-            telemetry.addData("elbownum", elbow.pos);
+            telemetry.addData("pivotPos", rpivotM.getServo().getPosition());
+            telemetry.addData("larm", larm.getServo().getPosition());
+            telemetry.addData("rarm", elbow.getServo().getPosition());
+            telemetry.addData("elbownum", elbow.getServo().getPosition());
             telemetry.update();
         }
     }}
