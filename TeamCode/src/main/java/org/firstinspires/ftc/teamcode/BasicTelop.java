@@ -105,11 +105,11 @@ public class BasicTelop extends LinearOpMode {
         //initialize toggle servos (servos that go between angles at the press of a button)
         ToggleServo intakeDrop = new ToggleServo(intakeDropM, new int[]{0, 65}, Servo.Direction.FORWARD);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{250, 245, 225, 120, 110}, Servo.Direction.REVERSE, 340);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{250, 245, 225, 120, 110}, Servo.Direction.FORWARD, 340);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{350, 0, 75, 65, 225}, Servo.Direction.FORWARD, 270);
-        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{0, 60}, Servo.Direction.REVERSE);
-        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{0, 60}, Servo.Direction.REVERSE);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 245, 225, 120, 110}, Servo.Direction.REVERSE, 340);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 245, 225, 120, 110}, Servo.Direction.FORWARD, 340);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{120, 45, 75, 95, 150}, Servo.Direction.FORWARD, 270);
+        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{35, 100}, Servo.Direction.REVERSE);
+        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{37, 99}, Servo.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -142,9 +142,8 @@ public class BasicTelop extends LinearOpMode {
 
         //other variables used in teleop
         // added rslidesPower and lslidesPower
-        double rslidesPower= 0;
-        double lslidesPower = 0;
         double hslidesPower = 0;
+        double vslidesPower = 0;
         double handPower = 0;
         int intakeDirection = -1;
         boolean intakeOn = false;
@@ -185,21 +184,11 @@ public class BasicTelop extends LinearOpMode {
             leftBackDrive.setPower(leftBackPower * driveSensitivity);
             rightBackDrive.setPower(rightBackPower * driveSensitivity);
 
-            //vertical slides control
-            if(gamepad2.left_trigger > 0 && gamepad2.right_trigger > 0){
-                rslidesPower = 0.1;
-                lslidesPower = 0.1;
-            }
-            else if(gamepad2.left_trigger > 0){
-                rslidesPower = gamepad2.left_trigger;
-                lslidesPower = gamepad2.left_trigger;
-            }
-
-            else {
-                rslidesPower = 0.1;
-                lslidesPower = 0.1;
-            }
-
+            //horizontal slides control
+            if(gamepad2.left_trigger > 0.02 && gamepad2.right_trigger > 0.01) vslidesPower = 0;
+            else if(gamepad2.left_trigger > 0.01) vslidesPower = -gamepad2.left_trigger;
+            else if(gamepad2.right_trigger > 0.01) vslidesPower = gamepad2.right_trigger;
+            else vslidesPower = 0;
             //horizontal slides control
             if(gamepad1.left_trigger > 0.01 && gamepad1.right_trigger > 0.01) hslidesPower = 0;
             else if(gamepad1.left_trigger > 0.01) hslidesPower = gamepad1.left_trigger;
@@ -207,6 +196,8 @@ public class BasicTelop extends LinearOpMode {
             else hslidesPower = 0;
 
             //slides power
+            rslidesMotor.setPower(vslidesPower);
+            lslidesMotor.setPower(vslidesPower);
             hslidesMotor.setPower(hslidesPower);
 
             //motor intake
@@ -227,18 +218,20 @@ public class BasicTelop extends LinearOpMode {
             if(gamepad1.a && !a1Pressed) intakeDrop.toggle();
             if(gamepad1.x && !x1Pressed) hlock.toggleRight();
             if(gamepad2.dpad_left && !left2Pressed){
-                larm.toggleLeft();
-                rarm.toggleLeft();
+//                larm.toggleLeft();
+//                rarm.toggleLeft();
                 elbow.toggleLeft();
             }
             if(gamepad2.dpad_right && !right2Pressed){
-                larm.toggleRight();
-                rarm.toggleRight();
+//                larm.toggleRight();
+//                rarm.toggleRight();
                 elbow.toggleRight();
             }
             if(gamepad2.x && !x2Pressed) {
+                claw.setPosition(100);
             }
             if(gamepad2.a && !a2Pressed){
+                claw.setPosition(0);
             }
 
             if(gamepad2.dpad_down && !down2Pressed) {
