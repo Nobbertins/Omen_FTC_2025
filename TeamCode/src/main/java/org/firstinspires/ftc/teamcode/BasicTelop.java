@@ -107,9 +107,10 @@ public class BasicTelop extends LinearOpMode {
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
         ToggleServo larm = new ToggleServo(larmM, new int[]{0, 245, 225, 120, 110}, Servo.Direction.REVERSE, 340);
         ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 245, 225, 120, 110}, Servo.Direction.FORWARD, 340);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{120, 45, 75, 95, 150}, Servo.Direction.FORWARD, 270);
-        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{35, 100}, Servo.Direction.REVERSE);
-        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{37, 99}, Servo.Direction.FORWARD);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{175, 45, 75, 95, 150}, Servo.Direction.FORWARD, 270);
+        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{35, 82, 100}, Servo.Direction.REVERSE);
+        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{37, 80, 99}, Servo.Direction.FORWARD);
+        // pivot angles are set for max pivot already
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
