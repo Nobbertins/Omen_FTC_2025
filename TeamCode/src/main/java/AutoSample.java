@@ -47,10 +47,14 @@ public class AutoSample extends LinearOpMode {
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rslidesMotor.setDirection(DcMotor.Direction.FORWARD);
         lslidesMotor.setDirection(DcMotor.Direction.FORWARD);
+        larmM.setDirection(Servo.Direction.REVERSE);
+        rarmM.setDirection(Servo.Direction.FORWARD);
+        elbowM.setDirection(Servo.Direction.REVERSE);
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
+        lslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         waitForStart();
         runtime.reset();
         double speed = 0.5;
@@ -61,9 +65,6 @@ public class AutoSample extends LinearOpMode {
 //            rightBackDrive.setPower(-speed);
 //            leftBackDrive.setPower(speed);
 //            rightFrontDrive.setPower(speed);
-            elbowM.setPosition(0);
-            claw.setPosition(50);
-            wrist.setPosition(0);
             if (runtime.seconds() < 0.9) {
                 leftFrontDrive.setPower(speed);
                 rightBackDrive.setPower(speed);
@@ -77,8 +78,29 @@ public class AutoSample extends LinearOpMode {
                 rightBackDrive.setPower(0);
                 leftBackDrive.setPower(0);
                 rightFrontDrive.setPower(0);
-                lslidesMotor.setPower(0.6);
-                rslidesMotor.setPower(0.6);
+                lslidesMotor.setPower(0.8);
+                rslidesMotor.setPower(0.8);
+            }
+            if(runtime.seconds() > 2 && runtime.seconds() < 3){
+                lslidesMotor.setPower(0.4);
+                rslidesMotor.setPower(0.4);
+            }
+            if(runtime.seconds() > 3 && runtime.seconds() < 6){
+                lslidesMotor.setPower(0);
+                rslidesMotor.setPower(0);
+                larmM.setPosition(340);
+                rarmM.setPosition(340);
+                elbowM.setPosition(150);
+            }
+            if(runtime.seconds() > 6 && runtime.seconds() < 10){
+                lslidesMotor.setPower(0);
+                rslidesMotor.setPower(0);
+                larmM.setPosition(0);
+                rarmM.setPosition(0);
+                elbowM.setPosition(270);
+            }
+            if(runtime.seconds() > 10){
+                break;
             }
         }
     }
