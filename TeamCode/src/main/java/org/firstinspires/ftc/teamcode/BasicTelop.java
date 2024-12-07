@@ -110,6 +110,7 @@ public class BasicTelop extends LinearOpMode {
         ToggleServo elbow = new ToggleServo(elbowM, new int[]{120, 45, 75, 95, 150}, Servo.Direction.FORWARD, 270);
         ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{35, 100}, Servo.Direction.REVERSE);
         ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{37, 99}, Servo.Direction.FORWARD);
+        ToggleServo clawM = new ToggleServo(claw, new int[]{0, 100}, Servo.Direction.REVERSE);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -153,6 +154,7 @@ public class BasicTelop extends LinearOpMode {
         while (opModeIsActive()) {
             double max;
 
+            wrist.setPosition(0);
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
@@ -227,13 +229,9 @@ public class BasicTelop extends LinearOpMode {
 //                rarm.toggleRight();
                 elbow.toggleRight();
             }
-            if(gamepad2.x && !x2Pressed) {
-                claw.setPosition(100);
+            if(gamepad2.a && !a2Pressed) {
+                clawM.toggle();
             }
-            if(gamepad2.a && !a2Pressed){
-                claw.setPosition(0);
-            }
-
             if(gamepad2.dpad_down && !down2Pressed) {
                 lpivotM.toggleRight();
                 rpivotM.toggleRight();
