@@ -46,8 +46,8 @@ public class AutoSample extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rslidesMotor.setDirection(DcMotor.Direction.FORWARD);
-        lslidesMotor.setDirection(DcMotor.Direction.FORWARD);
-        larmM.setDirection(Servo.Direction.REVERSE);
+        lslidesMotor.setDirection(DcMotor.Direction.REVERSE);
+        larmM.setDirection(Servo.Direction.FORWARD);
         rarmM.setDirection(Servo.Direction.FORWARD);
         elbowM.setDirection(Servo.Direction.REVERSE);
         // Wait for the game to start (driver presses START)
