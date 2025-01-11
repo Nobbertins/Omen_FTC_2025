@@ -52,17 +52,18 @@ public class BasicTelop extends LinearOpMode {
     private DcMotor rslidesMotor = null;
     private DcMotor hslidesMotor = null;
 
-    private CRServo transfer = null;
+    private Servo transfer = null;
     private Servo rpivot = null;
     private Servo lpivot = null;
 
-    private Servo intakeDropM = null;
+    private Servo intakePivAM = null;
+    private Servo intakePivBM = null;
     private Servo hlockM = null;
     private Servo larmM = null;
     private Servo rarmM = null;
     private Servo elbowM = null;
     private Servo claw = null;
-    private Servo wrist = null;
+
 
 
     @Override
@@ -79,15 +80,15 @@ public class BasicTelop extends LinearOpMode {
         rslidesMotor  = hardwareMap.get(DcMotor.class, "rslides");
         hslidesMotor  = hardwareMap.get(DcMotor.class, "hslides");
         //vslidesMotor = hardwareMap.get(DcMotor.class, "vslides");
-        transfer = hardwareMap.get(CRServo.class, "transfer");
+        transfer = hardwareMap.get(Servo.class, "transfer");
         rpivot = hardwareMap.get(Servo.class, "rpivot");
         lpivot = hardwareMap.get(Servo.class, "lpivot");
-        intakeDropM = hardwareMap.get(Servo.class, "intakeDrop");
+        intakePivAM = hardwareMap.get(Servo.class, "intakePivA");
+        intakePivBM = hardwareMap.get(Servo.class, "intakePivB");
         hlockM = hardwareMap.get(Servo.class, "hlock");
         larmM = hardwareMap.get(Servo.class, "larm");
         rarmM = hardwareMap.get(Servo.class, "rarm");
         elbowM = hardwareMap.get(Servo.class, "elbow");
-        wrist = hardwareMap.get(Servo.class, "wrist");
         claw = hardwareMap.get(Servo.class, "claw");
 
         //initialize motor directions
@@ -98,21 +99,23 @@ public class BasicTelop extends LinearOpMode {
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
         rslidesMotor.setDirection(DcMotor.Direction.FORWARD);
         lslidesMotor.setDirection(DcMotor.Direction.FORWARD);
-        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
+        transfer.setDirection(Servo.Direction.REVERSE);
 
        hslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //initialize toggle servos (servos that go between angles at the press of a button)
-        ToggleServo intakeDrop = new ToggleServo(intakeDropM, new int[]{0, 65}, Servo.Direction.FORWARD);
+        sleep(10);
+        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{0, 130, 215}, Servo.Direction.FORWARD);
+        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{0, 130, 215}, Servo.Direction.REVERSE);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
         ToggleServo larm = new ToggleServo(larmM, new int[]{30, 110, 135}, Servo.Direction.FORWARD, 0);
         ToggleServo rarm = new ToggleServo(rarmM, new int[]{30, 110, 135}, Servo.Direction.REVERSE, 0);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{30, 100, 220}, Servo.Direction.REVERSE, 0);
-        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{35,  83, 100}, Servo.Direction.REVERSE);
-        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{37, 82, 99}, Servo.Direction.FORWARD);
-        ToggleServo clawM = new ToggleServo(claw, new int[]{50, 0}, Servo.Direction.REVERSE);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{30, 100, 220}, Servo.Direction.FORWARD, 180);
+        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{40,  83, 100}, Servo.Direction.REVERSE);
+        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{42, 82, 99}, Servo.Direction.FORWARD);
+        ToggleServo clawM = new ToggleServo(claw, new int[]{50, 0}, Servo.Direction.FORWARD, 50);
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -155,8 +158,6 @@ public class BasicTelop extends LinearOpMode {
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
-
-            wrist.setPosition(0);
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
             double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
             double lateral =  gamepad1.left_stick_x;
@@ -211,15 +212,22 @@ public class BasicTelop extends LinearOpMode {
 
             if(intakeOn){
                 intakeMotor.setPower(intakeDirection < 0 ? intakeDirection * intakeSpeed : intakeDirection * 0.6);
-                transfer.setPower(1.0);
+                transfer.setPosition(180);
             }
             else{
                 intakeMotor.setPower(0);
-                transfer.setPower(0);
+                transfer.setPosition(0);
             }
 
             //toggle servos inputs
-            if(gamepad1.a && !a1Pressed) intakeDrop.toggle();
+            if(gamepad1.a && !a1Pressed) {
+                intakePivA.toggleRight();
+                intakePivB.toggleRight();
+            }
+            if(gamepad1.b && !b1Pressed) {
+                intakePivA.toggleLeft();
+                intakePivB.toggleLeft();
+            }
             if(gamepad1.x && !x1Pressed) hlock.toggleRight();
             if(gamepad2.dpad_left && !left2Pressed){
                 larm.toggleLeft();
