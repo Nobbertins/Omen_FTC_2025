@@ -52,9 +52,9 @@ public class BasicTelop extends LinearOpMode {
     private DcMotor rslidesMotor = null;
     private DcMotor hslidesMotor = null;
 
-    private Servo transfer = null;
-    private Servo rpivot = null;
-    private Servo lpivot = null;
+    private Servo transferM = null;
+    private Servo rpivotM = null;
+    private Servo lpivotM = null;
 
     private Servo intakePivAM = null;
     private Servo intakePivBM = null;
@@ -62,7 +62,7 @@ public class BasicTelop extends LinearOpMode {
     private Servo larmM = null;
     private Servo rarmM = null;
     private Servo elbowM = null;
-    private Servo claw = null;
+    private Servo clawM = null;
 
 
 
@@ -80,16 +80,16 @@ public class BasicTelop extends LinearOpMode {
         rslidesMotor  = hardwareMap.get(DcMotor.class, "rslides");
         hslidesMotor  = hardwareMap.get(DcMotor.class, "hslides");
         //vslidesMotor = hardwareMap.get(DcMotor.class, "vslides");
-        transfer = hardwareMap.get(Servo.class, "transfer");
-        rpivot = hardwareMap.get(Servo.class, "rpivot");
-        lpivot = hardwareMap.get(Servo.class, "lpivot");
+        transferM = hardwareMap.get(Servo.class, "transfer");
+        rpivotM = hardwareMap.get(Servo.class, "rpivot");
+        lpivotM = hardwareMap.get(Servo.class, "lpivot");
         intakePivAM = hardwareMap.get(Servo.class, "intakePivA");
         intakePivBM = hardwareMap.get(Servo.class, "intakePivB");
         hlockM = hardwareMap.get(Servo.class, "hlock");
         larmM = hardwareMap.get(Servo.class, "larm");
         rarmM = hardwareMap.get(Servo.class, "rarm");
         elbowM = hardwareMap.get(Servo.class, "elbow");
-        claw = hardwareMap.get(Servo.class, "claw");
+        clawM = hardwareMap.get(Servo.class, "claw");
 
         //initialize motor directions
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -99,7 +99,7 @@ public class BasicTelop extends LinearOpMode {
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
         rslidesMotor.setDirection(DcMotor.Direction.FORWARD);
         lslidesMotor.setDirection(DcMotor.Direction.FORWARD);
-        transfer.setDirection(Servo.Direction.REVERSE);
+
 
        hslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -107,15 +107,28 @@ public class BasicTelop extends LinearOpMode {
         rslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //initialize toggle servos (servos that go between angles at the press of a button)
         sleep(10);
-        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{0, 130, 215}, Servo.Direction.FORWARD);
-        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{0, 130, 215}, Servo.Direction.REVERSE);
+        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{5, 130, 220}, Servo.Direction.FORWARD);
+        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{5, 130, 220}, Servo.Direction.REVERSE);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{30, 110, 135}, Servo.Direction.FORWARD, 0);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{30, 110, 135}, Servo.Direction.REVERSE, 0);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 30, 60, 90, 120, 150, 170, 200}, Servo.Direction.FORWARD, 0);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 30, 60, 90, 120, 150, 170, 200}, Servo.Direction.REVERSE, 0);
         ToggleServo elbow = new ToggleServo(elbowM, new int[]{30, 100, 220}, Servo.Direction.FORWARD, 180);
-        ToggleServo rpivotM = new ToggleServo(rpivot, new int[]{40,  83, 100}, Servo.Direction.REVERSE);
-        ToggleServo lpivotM = new ToggleServo(lpivot, new int[]{42, 82, 99}, Servo.Direction.FORWARD);
-        ToggleServo clawM = new ToggleServo(claw, new int[]{50, 0}, Servo.Direction.FORWARD, 50);
+        ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 0);
+        ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 0);
+        ToggleServo claw = new ToggleServo(clawM, new int[]{0, 90}, Servo.Direction.FORWARD);
+        ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 50);
+//ARM ORIGINAL
+        //30, 110, 135
+        //30, 110, 135
+
+        //ELBOW ORIGINAL
+        //30, 100, 220
+
+
+        // PIVOTS ORIGINAL
+        //40,  83, 100
+        //42, 82, 99
+
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
@@ -212,11 +225,9 @@ public class BasicTelop extends LinearOpMode {
 
             if(intakeOn){
                 intakeMotor.setPower(intakeDirection < 0 ? intakeDirection * intakeSpeed : intakeDirection * 0.6);
-                transfer.setPosition(180);
             }
             else{
                 intakeMotor.setPower(0);
-                transfer.setPosition(0);
             }
 
             //toggle servos inputs
@@ -228,32 +239,65 @@ public class BasicTelop extends LinearOpMode {
                 intakePivA.toggleLeft();
                 intakePivB.toggleLeft();
             }
-            if(gamepad1.x && !x1Pressed) hlock.toggleRight();
+//            if(gamepad1.x && !x1Pressed) transfer.toggle();
+
+//            if(gamepad1.y && !y1Pressed) hlock.toggle();
+
+
+
+
+
+
+
+            if(gamepad2.y && !y2Pressed){
+             rarm.toggleRight();
+             larm.toggleRight();
+            }
+            if(gamepad2.x && !x2Pressed){
+              rarm.toggleLeft();
+              larm.toggleLeft();
+            }
+
+
+
+            if(gamepad1.y && !y1Pressed){
+                rpivot.toggleRight();
+                lpivot.toggleRight();
+            }
+            if(gamepad1.x && !x1Pressed){
+                rpivot.toggleLeft();
+                lpivot.toggleLeft();
+            }
+
             if(gamepad2.dpad_left && !left2Pressed){
                 larm.toggleLeft();
-                rarm.toggleLeft();
+//                rarm.toggleLeft();
                 elbow.toggleLeft();
             }
             if(gamepad2.dpad_right && !right2Pressed){
                 larm.toggleRight();
-                rarm.toggleRight();
+//                rarm.toggleRight();
                 elbow.toggleRight();
             }
-            if(gamepad2.a && !a2Pressed) {
-                clawM.toggle();
-            }
-            if(gamepad2.dpad_down && !down2Pressed) {
-                lpivotM.toggleRight();
-                rpivotM.toggleRight();
-//                lpivot.setPosition(0);
-//                rpivot.setPosition(0);
-            }
-            if(gamepad2.dpad_up && !up2Pressed) {
-                rpivotM.toggleLeft();
-                lpivotM.toggleLeft();
-//                lpivot.setPosition(90);
-//                rpivot.setPosition(0);
-            }
+            if(gamepad2.a && !a2Pressed) claw.toggle();
+
+            if(gamepad2.x && !x2Pressed) larm.toggleRight();
+
+
+            if(gamepad2.y && !y2Pressed) lpivot.toggleRight();
+
+//            if(gamepad2.dpad_down && !down2Pressed) {
+//                lpivot.toggleRight();
+//                rpivot.toggleRight();
+////                lpivot.setPosition(0);
+////                rpivot.setPosition(0);
+//            }
+//            if(gamepad2.dpad_up && !up2Pressed) {
+//                rpivot.toggleLeft();
+//                lpivot.toggleLeft();
+////                lpivot.setPosition(90);
+////                rpivot.setPosition(0);
+//            }
 
             //update all button states
             b1Pressed = gamepad1.b;
@@ -285,7 +329,7 @@ public class BasicTelop extends LinearOpMode {
             telemetry.addData("ArmL", larm.getServo().getPosition());
             telemetry.addData("ArmR", rarm.getServo().getPosition());
             telemetry.addData("Elbow", elbow.getServo().getPosition());
-            telemetry.addData("pivotPos", rpivotM.getServo().getPosition());
+            telemetry.addData("pivotPos", rpivot.getServo().getPosition());
             telemetry.addData("larm", larm.getServo().getPosition());
             telemetry.addData("rarm", rarm.getServo().getPosition());
             telemetry.addData("elbownum", elbow.pos);
