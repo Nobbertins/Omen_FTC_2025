@@ -107,12 +107,12 @@ public class BasicTelop extends LinearOpMode {
         rslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //initialize toggle servos (servos that go between angles at the press of a button)
         sleep(10);
-        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{5, 130, 220}, Servo.Direction.FORWARD);
-        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{5, 130, 220}, Servo.Direction.REVERSE);
+        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 130, 215}, Servo.Direction.FORWARD, 15);
+        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE, 15);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
         ToggleServo larm = new ToggleServo(larmM, new int[]{0, 30, 60, 90, 120, 150, 170, 200}, Servo.Direction.FORWARD, 0);
         ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 30, 60, 90, 120, 150, 170, 200}, Servo.Direction.REVERSE, 0);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{30, 100, 220}, Servo.Direction.FORWARD, 180);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{0, 20, 100, 220}, Servo.Direction.FORWARD, 180);
         ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 0);
         ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 0);
         ToggleServo claw = new ToggleServo(clawM, new int[]{0, 90}, Servo.Direction.FORWARD);
@@ -251,11 +251,11 @@ public class BasicTelop extends LinearOpMode {
 
             if(gamepad2.y && !y2Pressed){
              rarm.toggleRight();
-             larm.toggleRight();
+//             larm.toggleRight();
             }
             if(gamepad2.x && !x2Pressed){
               rarm.toggleLeft();
-              larm.toggleLeft();
+//              larm.toggleLeft();
             }
 
 
@@ -284,7 +284,7 @@ public class BasicTelop extends LinearOpMode {
             if(gamepad2.x && !x2Pressed) larm.toggleRight();
 
 
-            if(gamepad2.y && !y2Pressed) lpivot.toggleRight();
+//            if(gamepad2.y && !y2Pressed) lpivot.toggleRight();
 
 //            if(gamepad2.dpad_down && !down2Pressed) {
 //                lpivot.toggleRight();
