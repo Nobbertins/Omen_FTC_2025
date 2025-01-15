@@ -110,12 +110,12 @@ public class BasicTelop extends LinearOpMode {
         ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 130, 215}, Servo.Direction.FORWARD, 15);
         ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE, 15);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 30, 60, 90, 120, 150, 170, 200}, Servo.Direction.FORWARD, 0);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 30, 60, 90, 120, 150, 170, 200}, Servo.Direction.REVERSE, 0);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{0, 20, 100, 220}, Servo.Direction.FORWARD, 180);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{0}, Servo.Direction.REVERSE, 0);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0}, Servo.Direction.FORWARD, 0);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{160, 155, 150, 145}, Servo.Direction.FORWARD, 160);
         ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 0);
         ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 0);
-        ToggleServo claw = new ToggleServo(clawM, new int[]{0, 90}, Servo.Direction.FORWARD);
+        ToggleServo claw = new ToggleServo(clawM, new int[]{0, 200}, Servo.Direction.FORWARD);
         ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 50);
 //ARM ORIGINAL
         //30, 110, 135
@@ -231,7 +231,7 @@ public class BasicTelop extends LinearOpMode {
             }
 
             //toggle servos inputs
-            if(gamepad1.a && !a1Pressed) {
+            if(gamepad1.a && !a1Pressed && !gamepad1.start){
                 intakePivA.toggleRight();
                 intakePivB.toggleRight();
             }
@@ -271,15 +271,18 @@ public class BasicTelop extends LinearOpMode {
 
             if(gamepad2.dpad_left && !left2Pressed){
                 larm.toggleLeft();
-//                rarm.toggleLeft();
+                rarm.toggleLeft();
                 elbow.toggleLeft();
             }
             if(gamepad2.dpad_right && !right2Pressed){
                 larm.toggleRight();
-//                rarm.toggleRight();
+                rarm.toggleRight();
                 elbow.toggleRight();
             }
-            if(gamepad2.a && !a2Pressed) claw.toggle();
+            if(gamepad2.a && !a2Pressed) {
+                claw.toggle();
+                rarm.toggle();
+            }
 
             if(gamepad2.x && !x2Pressed) larm.toggleRight();
 
