@@ -110,13 +110,13 @@ public class BasicTelop extends LinearOpMode {
         ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 130, 215}, Servo.Direction.FORWARD, 15);
         ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE, 15);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160}, Servo.Direction.FORWARD, 0);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160}, Servo.Direction.REVERSE, 0);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{150, 100, 60}, Servo.Direction.FORWARD, 150);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160, 350, 350, 350}, Servo.Direction.FORWARD, 0);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160, 350, 350, 350}, Servo.Direction.REVERSE, 0);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{150, 100, 85, 200, 360, 20}, Servo.Direction.FORWARD, 150);
         ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 0);
         ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 0);
         ToggleServo claw = new ToggleServo(clawM, new int[]{0, 200}, Servo.Direction.FORWARD);
-        ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 50);
+        ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 0);
 //ARM ORIGINAL
         //30, 110, 135
         //30, 110, 135
