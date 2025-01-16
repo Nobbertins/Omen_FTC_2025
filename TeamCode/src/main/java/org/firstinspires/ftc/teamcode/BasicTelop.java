@@ -108,15 +108,15 @@ public class BasicTelop extends LinearOpMode {
         //initialize toggle servos (servos that go between angles at the press of a button)
         sleep(10);
         ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 130, 215}, Servo.Direction.FORWARD, 15);
-        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE, 1);
+        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE, 15);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 10, 340}, Servo.Direction.FORWARD, 0);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 10, 340}, Servo.Direction.REVERSE, 0);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{0, 100, 180}, Servo.Direction.FORWARD, 180);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160}, Servo.Direction.FORWARD, 0);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160}, Servo.Direction.REVERSE, 0);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{150, 100, 60}, Servo.Direction.FORWARD, 150);
         ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 0);
         ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 0);
-        ToggleServo claw = new ToggleServo(clawM, new int[]{0, 90}, Servo.Direction.FORWARD);
-        ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 180}, Servo.Direction.FORWARD, 50);
+        ToggleServo claw = new ToggleServo(clawM, new int[]{0, 200}, Servo.Direction.FORWARD);
+        ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 50);
 //ARM ORIGINAL
         //30, 110, 135
         //30, 110, 135
@@ -231,7 +231,7 @@ public class BasicTelop extends LinearOpMode {
             }
 
             //toggle servos inputs
-            if(gamepad1.a && !a1Pressed) {
+            if(gamepad1.a && !a1Pressed && !gamepad1.start){
                 intakePivA.toggleRight();
                 intakePivB.toggleRight();
             }
@@ -239,65 +239,31 @@ public class BasicTelop extends LinearOpMode {
                 intakePivA.toggleLeft();
                 intakePivB.toggleLeft();
             }
-//            if(gamepad1.x && !x1Pressed) transfer.toggle();
+           if(gamepad1.x && !x1Pressed) transfer.toggle();
 
-//            if(gamepad1.y && !y1Pressed) hlock.toggle();
-
-
-
-
-
-
-
-            if(gamepad2.y && !y2Pressed){
-             rarm.toggleRight();
-//             larm.toggleRight();
-            }
-            if(gamepad2.x && !x2Pressed){
-              rarm.toggleLeft();
-//              larm.toggleLeft();
-            }
-
-
-
-            if(gamepad1.y && !y1Pressed){
-                rpivot.toggleRight();
-                lpivot.toggleRight();
-            }
-            if(gamepad1.x && !x1Pressed){
-                rpivot.toggleLeft();
-                lpivot.toggleLeft();
-            }
+            if(gamepad1.y && !y1Pressed) hlock.toggle();
 
             if(gamepad2.dpad_left && !left2Pressed){
                 larm.toggleLeft();
-//                rarm.toggleLeft();
+                rarm.toggleLeft();
                 elbow.toggleLeft();
             }
             if(gamepad2.dpad_right && !right2Pressed){
                 larm.toggleRight();
-//                rarm.toggleRight();
+                rarm.toggleRight();
                 elbow.toggleRight();
             }
-            if(gamepad2.a && !a2Pressed) claw.toggle();
-
-            if(gamepad2.x && !x2Pressed) larm.toggleRight();
-
-
-//            if(gamepad2.y && !y2Pressed) lpivot.toggleRight();
-
-//            if(gamepad2.dpad_down && !down2Pressed) {
-//                lpivot.toggleRight();
-//                rpivot.toggleRight();
-////                lpivot.setPosition(0);
-////                rpivot.setPosition(0);
-//            }
-//            if(gamepad2.dpad_up && !up2Pressed) {
-//                rpivot.toggleLeft();
-//                lpivot.toggleLeft();
-////                lpivot.setPosition(90);
-////                rpivot.setPosition(0);
-//            }
+            if(gamepad2.a && !a2Pressed) {
+                claw.toggle();
+            }
+            if(gamepad2.dpad_down && !down2Pressed) {
+                lpivot.toggleRight();
+                rpivot.toggleRight();
+            }
+            if(gamepad2.dpad_up && !up2Pressed) {
+                rpivot.toggleLeft();
+                lpivot.toggleLeft();
+            }
 
             //update all button states
             b1Pressed = gamepad1.b;
