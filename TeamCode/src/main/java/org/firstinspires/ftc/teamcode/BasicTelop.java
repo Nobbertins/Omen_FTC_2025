@@ -110,8 +110,8 @@ public class BasicTelop extends LinearOpMode {
         ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 130, 215}, Servo.Direction.FORWARD, 15);
         ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE, 15);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160}, Servo.Direction.REVERSE, 0);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160}, Servo.Direction.FORWARD, 0);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160}, Servo.Direction.FORWARD, 0);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160}, Servo.Direction.REVERSE, 0);
         ToggleServo elbow = new ToggleServo(elbowM, new int[]{150, 100, 60}, Servo.Direction.FORWARD, 150);
         ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 0);
         ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 0);
@@ -241,17 +241,7 @@ public class BasicTelop extends LinearOpMode {
             }
            if(gamepad1.x && !x1Pressed) transfer.toggle();
 
-          if(gamepad1.y && !y1Pressed) hlock.toggle();
-
-
-            if(gamepad1.y && !y1Pressed){
-                rpivot.toggleRight();
-                lpivot.toggleRight();
-            }
-            if(gamepad1.x && !x1Pressed){
-                rpivot.toggleLeft();
-                lpivot.toggleLeft();
-            }
+            if(gamepad1.y && !y1Pressed) hlock.toggle();
 
             if(gamepad2.dpad_left && !left2Pressed){
                 larm.toggleLeft();
@@ -265,9 +255,7 @@ public class BasicTelop extends LinearOpMode {
             }
             if(gamepad2.a && !a2Pressed) {
                 claw.toggle();
-                rarm.toggle();
             }
-
             if(gamepad2.dpad_down && !down2Pressed) {
                 lpivot.toggleRight();
                 rpivot.toggleRight();
