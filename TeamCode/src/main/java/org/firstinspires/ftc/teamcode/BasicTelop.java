@@ -29,11 +29,15 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.ftc.Encoder;
+import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
+import com.acmerobotics.roadrunner.ftc.RawEncoder;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -99,8 +103,8 @@ public class BasicTelop extends LinearOpMode {
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
         rslidesMotor.setDirection(DcMotor.Direction.FORWARD);
         lslidesMotor.setDirection(DcMotor.Direction.FORWARD);
-
-
+        Encoder par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "fr")));
+        Encoder perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "br")));
        hslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         lslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -299,6 +303,8 @@ public class BasicTelop extends LinearOpMode {
             telemetry.addData("larm", larm.getServo().getPosition());
             telemetry.addData("rarm", rarm.getServo().getPosition());
             telemetry.addData("elbownum", elbow.pos);
+            telemetry.addData("perpTicks", perp.getPositionAndVelocity().position);
+            telemetry.addData("par0Ticks", par1.getPositionAndVelocity().position);
             telemetry.update();
         }
     }}
