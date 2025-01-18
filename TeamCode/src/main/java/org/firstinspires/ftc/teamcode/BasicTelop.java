@@ -111,14 +111,14 @@ public class BasicTelop extends LinearOpMode {
         rslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //initialize toggle servos (servos that go between angles at the press of a button)
         sleep(10);
-        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 130, 215}, Servo.Direction.FORWARD, 15);
-        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE, 15);
+        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 25, 130, 215}, Servo.Direction.FORWARD, 15);
+        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 25, 130, 215}, Servo.Direction.REVERSE, 15);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160, 350, 350, 350}, Servo.Direction.FORWARD, 0);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160, 350, 350, 350}, Servo.Direction.REVERSE, 0);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{150, 100, 85, 200, 360, 20}, Servo.Direction.FORWARD, 150);
-        ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 0);
-        ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 0);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160, 330}, Servo.Direction.FORWARD, 0);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160, 330}, Servo.Direction.REVERSE, 0);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{150, 100, 85, 360}, Servo.Direction.FORWARD, 150);
+        ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 60);
+        ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 60);
         ToggleServo claw = new ToggleServo(clawM, new int[]{0, 200}, Servo.Direction.FORWARD);
         ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 0);
 //ARM ORIGINAL
@@ -243,7 +243,7 @@ public class BasicTelop extends LinearOpMode {
                 intakePivA.toggleLeft();
                 intakePivB.toggleLeft();
             }
-           if(gamepad1.x && !x1Pressed) transfer.toggle();
+            if((gamepad1.x && !x1Pressed) || (gamepad2.x && !x2Pressed)) transfer.toggle();
 
             if(gamepad1.y && !y1Pressed) hlock.toggle();
 
