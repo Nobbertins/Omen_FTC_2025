@@ -111,8 +111,8 @@ public class BasicTelop extends LinearOpMode {
         rslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //initialize toggle servos (servos that go between angles at the press of a button)
         sleep(10);
-        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 25, 130, 215}, Servo.Direction.FORWARD, 15);
-        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 25, 130, 215}, Servo.Direction.REVERSE, 15);
+        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 25, 130, 215}, Servo.Direction.FORWARD, 130);
+        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 25, 130, 215}, Servo.Direction.REVERSE, 130);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
         ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160, 330}, Servo.Direction.FORWARD, 0);
         ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160, 330}, Servo.Direction.REVERSE, 0);
@@ -177,9 +177,9 @@ public class BasicTelop extends LinearOpMode {
         while (opModeIsActive()) {
             double max;
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+            double axial   = -gamepad1.left_stick_y*.8;  // Note: pushing stick forward gives negative value
+            double lateral =  gamepad1.left_stick_x*.8;
+            double yaw     =  gamepad1.right_stick_x*.8;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.

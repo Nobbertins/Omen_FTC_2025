@@ -25,7 +25,8 @@ public class SampleCollectionAuto extends LinearOpMode {
     // Define your robot's starting position
     private static final Pose2d STARTING_POSE = new Pose2d(-64, 0, Math.toRadians(180));
     // Sample positions (adjust these based on your field measurements)
-    private static final Vector2d SPECIMEN_DROP = new Vector2d(-40, 0);
+    private static final Vector2d SPECIMEN_DROP = new Vector2d(-35, 0);
+    private static final Vector2d SPECIMEN_DROP_PRE = new Vector2d(-40, 0);
     private static final Vector2d afterSPECIMEN_DROP = new Vector2d(-51, -26);
     private static final Vector2d SAMPLE_1_PRE = new Vector2d(-34, -36);
     private static final Vector2d SAMPLE_1= new Vector2d(-15, -45);
@@ -47,9 +48,9 @@ public class SampleCollectionAuto extends LinearOpMode {
             Servo rMotor = hardwareMap.get(Servo.class, "rarm");
             Servo lMotor = hardwareMap.get(Servo.class, "larm");
             Servo elbowMotor = hardwareMap.get(Servo.class, "elbow");
-            elbow = new ToggleServo(elbowMotor, new int[]{150, 100, 85, 360}, Servo.Direction.REVERSE, 150);
-            rArm = new ToggleServo(lMotor, new int[]{0, 80, 160, 330}, Servo.Direction.FORWARD, 0);
-            lArm = new ToggleServo(rMotor, new int[]{0, 80, 160, 330}, Servo.Direction.REVERSE, 0);
+            elbow = new ToggleServo(elbowMotor, new int[]{300, 360, 360}, Servo.Direction.REVERSE, 300);
+            rArm = new ToggleServo(lMotor, new int[]{330, 160, 200}, Servo.Direction.FORWARD, 330);
+            lArm = new ToggleServo(rMotor, new int[]{330, 160, 200}, Servo.Direction.REVERSE, 330);
         }
         //raise action class for raise method
         public class Right implements Action {
@@ -105,8 +106,8 @@ public class SampleCollectionAuto extends LinearOpMode {
         public Pivot(HardwareMap hardwareMap){
             Servo rMotor = hardwareMap.get(Servo.class, "rpivot");
             Servo lMotor = hardwareMap.get(Servo.class, "lpivot");
-            rPivot = new ToggleServo(rMotor, new int[]{0, 30, 80}, Servo.Direction.FORWARD, 80);
-            lPivot = new ToggleServo(lMotor, new int[]{0, 30, 80}, Servo.Direction.REVERSE, 80);
+            rPivot = new ToggleServo(rMotor, new int[]{0, 50, 80}, Servo.Direction.FORWARD, 80);
+            lPivot = new ToggleServo(lMotor, new int[]{0, 50, 80}, Servo.Direction.REVERSE, 80);
         }
         //raise action class for raise method
         public class Raise implements Action {
@@ -164,7 +165,7 @@ public class SampleCollectionAuto extends LinearOpMode {
         public class Drop implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double dropPower = 0.7;
+                double dropPower = -1;
                 leftSlides.setPower(dropPower);
                 rightSlides.setPower(dropPower);
                 sleep(600);
@@ -187,9 +188,16 @@ public class SampleCollectionAuto extends LinearOpMode {
         // TODO: Initialize your lift system
 
         TrajectoryActionBuilder driveToSpecimenDrop = drive.actionBuilder(STARTING_POSE)
-                .strafeTo(SPECIMEN_DROP);
+                .strafeTo(SPECIMEN_DROP_PRE);
         TrajectoryActionBuilder WAIT = drive.actionBuilder(STARTING_POSE)
-                .waitSeconds(4);
+                .waitSeconds(3);
+
+        TrajectoryActionBuilder moveBack= drive.actionBuilder(new Pose2d(SPECIMEN_DROP.x, SPECIMEN_DROP.y, STARTING_POSE.heading.toDouble()))
+                .strafeTo(new Vector2d(-45, 0));
+        TrajectoryActionBuilder specPose = drive.actionBuilder(new Pose2d(SPECIMEN_DROP_PRE.x, SPECIMEN_DROP_PRE.y, Math.toRadians(180)))
+                .strafeTo(SPECIMEN_DROP);
+        TrajectoryActionBuilder smallWait = drive.actionBuilder(STARTING_POSE)
+                .waitSeconds(0.5);
         // Build the entire action sequence
         TrajectoryActionBuilder pushSequence = drive.actionBuilder(new Pose2d(SPECIMEN_DROP.x, SPECIMEN_DROP.y, STARTING_POSE.heading.toDouble()))
                 // Move to specimen drop
@@ -234,26 +242,39 @@ public class SampleCollectionAuto extends LinearOpMode {
         Action pushTraj = pushSequence.build();
 
         Action waitTraj = WAIT.build();
-
+        Action smallWaitTraj = smallWait.build();
+        Action specPoseTraj = specPose.build();
+        Action moveBackTraj = moveBack.build();
         //arm.rightToggle, arm.leftToggle
         // TODO: Set lift to specimen height
         //Actions.runBlocking(autoSequence);
         Actions.runBlocking(
                 new SequentialAction(
                         pivot.raise(),
+                        smallWaitTraj,
                         pivot.raise(),
+                        smallWaitTraj,
                         pivot.raise(),
                         arm.rightToggle(),
-                        waitTraj,
-                        arm.rightToggle(),
-                        waitTraj,
-                        arm.rightToggle(),
-                        waitTraj,
                         startTraj,
                         vslides.raise(),
-                        pivot.raise(),
+                        specPoseTraj,
+                        arm.rightToggle(),
                         vslides.drop(),
-                        pushTraj
+                        waitTraj,
+                        pivot.drop(),
+                        waitTraj,
+                        claw.toggle(),
+                        waitTraj,
+                        moveBackTraj,
+                        arm.leftToggle(),
+                        arm.leftToggle()
+
+//                        startTraj,
+//                        vslides.raise(),
+//                        pivot.raise(),
+//                        vslides.drop(),
+//                        pushTraj
                 )
         );
         // Throughout the sequence, you'll need to add your intake/lift controls
