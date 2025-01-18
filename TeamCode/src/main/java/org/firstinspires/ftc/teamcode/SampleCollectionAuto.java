@@ -47,9 +47,9 @@ public class SampleCollectionAuto extends LinearOpMode {
             Servo rMotor = hardwareMap.get(Servo.class, "rarm");
             Servo lMotor = hardwareMap.get(Servo.class, "larm");
             Servo elbowMotor = hardwareMap.get(Servo.class, "elbow");
-            elbow = new ToggleServo(elbowMotor, new int[]{150, 100, 85, 360}, Servo.Direction.FORWARD, 150);
-            rArm = new ToggleServo(lMotor, new int[]{0, 80, 160, 330}, Servo.Direction.REVERSE, 0);
-            lArm = new ToggleServo(rMotor, new int[]{0, 80, 160, 330}, Servo.Direction.FORWARD, 0);
+            elbow = new ToggleServo(elbowMotor, new int[]{150, 100, 85, 360}, Servo.Direction.REVERSE, 150);
+            rArm = new ToggleServo(lMotor, new int[]{0, 80, 160, 330}, Servo.Direction.FORWARD, 0);
+            lArm = new ToggleServo(rMotor, new int[]{0, 80, 160, 330}, Servo.Direction.REVERSE, 0);
         }
         //raise action class for raise method
         public class Right implements Action {
@@ -105,8 +105,8 @@ public class SampleCollectionAuto extends LinearOpMode {
         public Pivot(HardwareMap hardwareMap){
             Servo rMotor = hardwareMap.get(Servo.class, "rpivot");
             Servo lMotor = hardwareMap.get(Servo.class, "lpivot");
-            rPivot = new ToggleServo(rMotor, new int[]{0, 30, 80}, Servo.Direction.FORWARD, 60);
-            lPivot = new ToggleServo(lMotor, new int[]{0, 30, 80}, Servo.Direction.REVERSE, 60);
+            rPivot = new ToggleServo(rMotor, new int[]{0, 30, 80}, Servo.Direction.FORWARD, 80);
+            lPivot = new ToggleServo(lMotor, new int[]{0, 30, 80}, Servo.Direction.REVERSE, 80);
         }
         //raise action class for raise method
         public class Raise implements Action {
