@@ -105,8 +105,8 @@ public class SampleCollectionAuto extends LinearOpMode {
         public Pivot(HardwareMap hardwareMap){
             Servo rMotor = hardwareMap.get(Servo.class, "rpivot");
             Servo lMotor = hardwareMap.get(Servo.class, "lpivot");
-            rPivot = new ToggleServo(rMotor, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 60);
-            lPivot = new ToggleServo(lMotor, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 60);
+            rPivot = new ToggleServo(rMotor, new int[]{0, 30, 80}, Servo.Direction.FORWARD, 60);
+            lPivot = new ToggleServo(lMotor, new int[]{0, 30, 80}, Servo.Direction.REVERSE, 60);
         }
         //raise action class for raise method
         public class Raise implements Action {

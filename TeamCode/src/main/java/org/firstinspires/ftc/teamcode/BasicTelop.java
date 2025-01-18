@@ -117,8 +117,8 @@ public class BasicTelop extends LinearOpMode {
         ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160, 330}, Servo.Direction.FORWARD, 0);
         ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160, 330}, Servo.Direction.REVERSE, 0);
         ToggleServo elbow = new ToggleServo(elbowM, new int[]{150, 100, 85, 360}, Servo.Direction.FORWARD, 150);
-        ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 60);
-        ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 60);
+        ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 0);
+        ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 0);
         ToggleServo claw = new ToggleServo(clawM, new int[]{0, 200}, Servo.Direction.FORWARD);
         ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 0);
 //ARM ORIGINAL
