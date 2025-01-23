@@ -111,17 +111,20 @@ public class BasicTelop extends LinearOpMode {
         rslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //initialize toggle servos (servos that go between angles at the press of a button)
         sleep(10);
-        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 25, 130, 215}, Servo.Direction.FORWARD, 130);
-        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 25, 130, 215}, Servo.Direction.REVERSE, 130);
+
+        //remeber to reccoment in 130 for start state for pivot I just took it out cause I was working on arms exclusively
+        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 25, 130, 215}, Servo.Direction.FORWARD);
+        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 25, 130, 215}, Servo.Direction.REVERSE);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 80, 160, 330}, Servo.Direction.FORWARD, 0);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 80, 160, 330}, Servo.Direction.REVERSE, 0);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{150, 100, 85, 360}, Servo.Direction.FORWARD, 150);
-        ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 30, 60}, Servo.Direction.FORWARD, 0);
-        ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 30, 60}, Servo.Direction.REVERSE, 0);
-        ToggleServo claw = new ToggleServo(clawM, new int[]{0, 200}, Servo.Direction.FORWARD);
-        ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 0);
-        
+        ToggleServo larm = new ToggleServo(larmM, new int[]{0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260}, Servo.Direction.FORWARD, 0);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260}, Servo.Direction.REVERSE, 0);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260}, Servo.Direction.REVERSE, 0);
+        ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 45, 60}, Servo.Direction.FORWARD, 0);
+        ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 45, 60}, Servo.Direction.REVERSE, 0);
+        ToggleServo claw = new ToggleServo(clawM, new int[]{2, 200}, Servo.Direction.REVERSE, 2);
+        ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 2);
+        //elbow 150, 100, 85, 360
+        // larm rarm 0, 80, 160, 330
 //ARM ORIGINAL
         //30, 110, 135
         //30, 110, 135
@@ -237,16 +240,26 @@ public class BasicTelop extends LinearOpMode {
 
             //toggle servos inputs
             if(gamepad1.a && !a1Pressed && !gamepad1.start){
-                intakePivA.toggleRight();
-                intakePivB.toggleRight();
+                larm.toggleLeft();
+                rarm.toggleLeft();
+
+                // temporary just add it back after
+//                intakePivA.toggleRight();
+//                intakePivB.toggleRight();
             }
             if(gamepad1.b && !b1Pressed) {
-                intakePivA.toggleLeft();
-                intakePivB.toggleLeft();
-            }
-            if((gamepad1.x && !x1Pressed) || (gamepad2.x && !x2Pressed)) transfer.toggle();
+                larm.toggleRight();
+                rarm.toggleRight();
 
-            if(gamepad1.y && !y1Pressed) hlock.toggle();
+//                intakePivA.toggleLeft();
+//                intakePivB.toggleLeft();
+            }
+//            if((gamepad1.x && !x1Pressed) || (gamepad2.x && !x2Pressed)) transfer.toggle();
+
+            if(gamepad1.x && !y1Pressed) elbow.toggleRight();
+
+            if(gamepad1.y && !y1Pressed) elbow.toggleLeft();
+//            if(gamepad1.y && !y1Pressed) hlock.toggle();
 
             if(gamepad2.dpad_left && !left2Pressed){
                 larm.toggleLeft();
