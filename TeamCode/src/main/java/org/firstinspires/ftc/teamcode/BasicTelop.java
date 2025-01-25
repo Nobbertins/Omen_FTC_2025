@@ -208,7 +208,7 @@ public class BasicTelop extends LinearOpMode {
             rightBackDrive.setPower(rightBackPower * driveSensitivity);
 
             //horizontal slides control
-            if(gamepad2.left_trigger > 0.02 && gamepad2.right_trigger > 0.01) vslidesPower = 0;
+            if(gamepad2.left_trigger > 0.01 && gamepad2.right_trigger > 0.01) vslidesPower = 0;
             else if(gamepad2.left_trigger > 0.01) vslidesPower = -gamepad2.left_trigger;
             else if(gamepad2.right_trigger > 0.01) vslidesPower = gamepad2.right_trigger;
             else vslidesPower = 0;
@@ -222,7 +222,6 @@ public class BasicTelop extends LinearOpMode {
             rslidesMotor.setPower(vslidesPower);
             lslidesMotor.setPower(vslidesPower);
             hslidesMotor.setPower(hslidesPower);
-
             //motor intake
             double intakeSpeed = 1.0;
             if(gamepad1.left_bumper && !lb1Pressed) intakeDirection *= -1;
