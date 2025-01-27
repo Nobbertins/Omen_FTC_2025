@@ -23,7 +23,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 @Autonomous(name = "Sample Collection Auto")
 public class SampleCollectionAuto extends LinearOpMode {
     // Define your robot's starting position
-    private static final Pose2d STARTING_POSE = new Pose2d(-64, 0, Math.toRadians(180));
+    private static final Pose2d STARTING_POSE = new Pose2d(-64, 0, Math.toRadians(0));
     // Sample positions (adjust these based on your field measurements)
     private static final Vector2d SPECIMEN_DROP = new Vector2d(-35, 0);
     private static final Vector2d SPECIMEN_DROP_PRE = new Vector2d(-40, 0);
@@ -48,9 +48,9 @@ public class SampleCollectionAuto extends LinearOpMode {
             Servo rMotor = hardwareMap.get(Servo.class, "rarm");
             Servo lMotor = hardwareMap.get(Servo.class, "larm");
             Servo elbowMotor = hardwareMap.get(Servo.class, "elbow");
-            elbow = new ToggleServo(elbowMotor, new int[]{300, 360, 360}, Servo.Direction.REVERSE, 300);
-            rArm = new ToggleServo(lMotor, new int[]{330, 160, 200}, Servo.Direction.FORWARD, 330);
-            lArm = new ToggleServo(rMotor, new int[]{330, 160, 200}, Servo.Direction.REVERSE, 330);
+            lArm = new ToggleServo(lMotor, new int[]{20, 70, 230,220, 220}, Servo.Direction.FORWARD, 0);
+            rArm = new ToggleServo(rMotor, new int[]{20, 70, 230, 220, 220}, Servo.Direction.REVERSE, 0);
+            elbow = new ToggleServo(elbowMotor, new int[]{10, 130, 0, 60, 210}, Servo.Direction.REVERSE, 0);
         }
         //raise action class for raise method
         public class Right implements Action {
@@ -136,6 +136,43 @@ public class SampleCollectionAuto extends LinearOpMode {
             return new Drop();
         }
     }
+
+    public class IntakePivot{
+        private ToggleServo intakePivA = null;
+        private ToggleServo intakePivB = null;
+        public IntakePivot(HardwareMap hardwareMap){
+            Servo intakePivAM = hardwareMap.get(Servo.class, "intakePivA");
+            Servo intakePivBM = hardwareMap.get(Servo.class, "intakePivB");
+            intakePivA = new ToggleServo(intakePivAM, new int[]{15, 25, 130, 215}, Servo.Direction.FORWARD, 25);
+            intakePivB = new ToggleServo(intakePivBM, new int[]{15, 25, 130, 215}, Servo.Direction.REVERSE, 25);
+        }
+        //raise action class for raise method
+        public class Raise implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                intakePivA.toggleLeft();
+                intakePivB.toggleLeft();
+                return false;
+            }
+        }
+        //raise method for easy calls
+        public Action raise() {
+            return new Raise();
+        }
+        //drop action class for drop method
+        public class Drop implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                intakePivA.toggleRight();
+                intakePivB.toggleRight();
+                return false;
+            }
+        }
+        //drop class for easy calls
+        public Action drop() {
+            return new Drop();
+        }
+    }
     //vertical slides class with raise and drop methods
     public class VerticalSlides{
         private DcMotor rightSlides = null;
@@ -148,10 +185,10 @@ public class SampleCollectionAuto extends LinearOpMode {
         public class Raise implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double liftPower = 0.7;
+                double liftPower = 0.9;
                 leftSlides.setPower(liftPower);
                 rightSlides.setPower(liftPower);
-                sleep(600);
+                sleep(800);
                 leftSlides.setPower(0);
                 rightSlides.setPower(0);
                 return false;
@@ -165,7 +202,7 @@ public class SampleCollectionAuto extends LinearOpMode {
         public class Drop implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double dropPower = -1;
+                double dropPower = -0.7;
                 leftSlides.setPower(dropPower);
                 rightSlides.setPower(dropPower);
                 sleep(600);
@@ -227,6 +264,8 @@ public class SampleCollectionAuto extends LinearOpMode {
         Pivot pivot = new Pivot(hardwareMap);
         //pivot.raise, pivot.drop
         Arm arm = new Arm(hardwareMap);
+        IntakePivot intakePiv = new IntakePivot(hardwareMap);
+
         Actions.runBlocking(
                 new SequentialAction(
                         pivot.drop(),
@@ -252,10 +291,12 @@ public class SampleCollectionAuto extends LinearOpMode {
                 new SequentialAction(
                         pivot.raise(),
                         smallWaitTraj,
-                        pivot.raise(),
+                        intakePiv.drop(),
+                        intakePiv.drop(),
                         smallWaitTraj,
-                        pivot.raise(),
                         arm.rightToggle(),
+                        arm.rightToggle(),
+                        pivot.drop(),
                         startTraj,
                         vslides.raise(),
                         specPoseTraj,
