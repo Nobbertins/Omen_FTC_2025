@@ -113,12 +113,12 @@ public class BasicTelop extends LinearOpMode {
         sleep(10);
 
         //remeber to reccoment in 130 for start state for pivot I just took it out cause I was working on arms exclusively
-        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 25, 130, 215}, Servo.Direction.FORWARD);
-        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 25, 130, 215}, Servo.Direction.REVERSE);
-        ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);//(20, 10), (70, 130), (0, 230), (210, 230)
-        ToggleServo larm = new ToggleServo(larmM, new int[]{20, 70, 230,220, 220}, Servo.Direction.FORWARD, 0);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{20, 70, 230, 220, 220}, Servo.Direction.REVERSE, 0);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{10, 130, 0, 60, 210}, Servo.Direction.REVERSE, 0);
+        ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 130, 215}, Servo.Direction.FORWARD);
+        ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE);
+        ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{20, 65, 230, 220, 220}, Servo.Direction.FORWARD, 20);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{20, 65, 230, 220, 220}, Servo.Direction.REVERSE, 20);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{10, 135, 0, 100, 210}, Servo.Direction.REVERSE, 10);
         ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 45, 60}, Servo.Direction.FORWARD, 0);
         ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 45, 60}, Servo.Direction.REVERSE, 0);
         ToggleServo claw = new ToggleServo(clawM, new int[]{2, 200}, Servo.Direction.REVERSE, 2);
@@ -251,10 +251,7 @@ public class BasicTelop extends LinearOpMode {
             }
             if((gamepad2.x && !x2Pressed)) transfer.toggle();
 
-            if(gamepad2.left_bumper && !lb2Pressed) elbow.toggleRight();
-
-            if(gamepad1.right_bumper && !rb2Pressed) elbow.toggleLeft();
-//            if(gamepad1.y && !y1Pressed) hlock.toggle();
+            if(gamepad1.y && !y1Pressed) hlock.toggle();
 
             if(gamepad2.dpad_left && !left2Pressed){
                 larm.toggleLeft();
@@ -269,19 +266,11 @@ public class BasicTelop extends LinearOpMode {
             if(gamepad2.a && !a2Pressed) {
                 claw.toggle();
             }
-            if(gamepad2.y && !y2Pressed) {
-                larm.toggleRight();
-                rarm.toggleRight();
-            }
-            if(gamepad2.b && !b2Pressed) {
-                larm.toggleLeft();
-                rarm.toggleLeft();
-            }
-            if(gamepad2.dpad_down && !down2Pressed) {
+            if(gamepad2.dpad_up && !up2Pressed) {
                 lpivot.toggleRight();
                 rpivot.toggleRight();
             }
-            if(gamepad2.dpad_up && !up2Pressed) {
+            if(gamepad2.dpad_down && !down2Pressed) {
                 rpivot.toggleLeft();
                 lpivot.toggleLeft();
             }

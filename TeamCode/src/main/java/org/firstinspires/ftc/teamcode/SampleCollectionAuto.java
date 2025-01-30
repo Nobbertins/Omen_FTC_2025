@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
@@ -25,20 +26,21 @@ public class SampleCollectionAuto extends LinearOpMode {
     // Define your robot's starting position
     private static final Pose2d STARTING_POSE = new Pose2d(-64, 0, Math.toRadians(0));
     // Sample positions (adjust these based on your field measurements)
-    private static final Vector2d SPECIMEN_DROP = new Vector2d(-35, 0);
-    private static final Vector2d SPECIMEN_DROP_PRE = new Vector2d(-40, 0);
+    private static final Vector2d SPECIMEN_DROP = new Vector2d(-44, 0);
+    private static final Vector2d SPECIMEN_DROP_PRE = new Vector2d(-46.4, 0);
     private static final Vector2d afterSPECIMEN_DROP = new Vector2d(-51, -26);
     private static final Vector2d SAMPLE_1_PRE = new Vector2d(-34, -36);
     private static final Vector2d SAMPLE_1= new Vector2d(-15, -45);
     private static final Vector2d SAMPLE_2_PRE = new Vector2d(-15, -44);
     private static final Vector2d SAMPLE_2 = new Vector2d(-15, -52);
     private static final Vector2d SAMPLE_3_PRE = new Vector2d(-15, -51);
-    private static final Vector2d SAMPLE_3 = new Vector2d(-15, -60);
+    private static final Vector2d SAMPLE_3 = new Vector2d(-15, -61);
     private static final Vector2d HUMAN_ZONE_1 = new Vector2d(-59, -45);
     private static final Vector2d HUMAN_ZONE_2 = new Vector2d(-59, -52);
     private static final Vector2d HUMAN_ZONE_3 = new Vector2d(-59, -60);
 
-    private static final Vector2d GRAB_POS = new Vector2d(-60, -42);
+    private static final Vector2d GRAB_POS = new Vector2d(-59, -42);
+    private static final Vector2d GRAB_POS_POST = new Vector2d(-62, -42);
     //pivot class with raise and drop methods
     public class Arm{
         private ToggleServo rArm = null;
@@ -48,9 +50,9 @@ public class SampleCollectionAuto extends LinearOpMode {
             Servo rMotor = hardwareMap.get(Servo.class, "rarm");
             Servo lMotor = hardwareMap.get(Servo.class, "larm");
             Servo elbowMotor = hardwareMap.get(Servo.class, "elbow");
-            lArm = new ToggleServo(lMotor, new int[]{20, 70, 230,220, 220}, Servo.Direction.FORWARD, 0);
-            rArm = new ToggleServo(rMotor, new int[]{20, 70, 230, 220, 220}, Servo.Direction.REVERSE, 0);
-            elbow = new ToggleServo(elbowMotor, new int[]{10, 130, 0, 60, 210}, Servo.Direction.REVERSE, 0);
+            lArm = new ToggleServo(lMotor, new int[]{20, 65, 230}, Servo.Direction.FORWARD, 20);
+            rArm = new ToggleServo(rMotor, new int[]{20, 65, 230}, Servo.Direction.REVERSE, 20);
+            elbow = new ToggleServo(elbowMotor, new int[]{10, 135, 0}, Servo.Direction.REVERSE, 10);
         }
         //raise action class for raise method
         public class Right implements Action {
@@ -85,13 +87,14 @@ public class SampleCollectionAuto extends LinearOpMode {
         private ToggleServo claw = null;
         public Claw(HardwareMap hardwareMap){
             Servo clawMotor = hardwareMap.get(Servo.class, "claw");
-            claw = new ToggleServo(clawMotor, new int[]{0, 200}, Servo.Direction.FORWARD);
+            claw = new ToggleServo(clawMotor, new int[]{2, 200}, Servo.Direction.REVERSE, 2);
         }
         //raise action class for raise method
         public class ToggleClaw implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 claw.toggle();
+                sleep(500);
                 return false;
             }
         }
@@ -143,8 +146,8 @@ public class SampleCollectionAuto extends LinearOpMode {
         public IntakePivot(HardwareMap hardwareMap){
             Servo intakePivAM = hardwareMap.get(Servo.class, "intakePivA");
             Servo intakePivBM = hardwareMap.get(Servo.class, "intakePivB");
-            intakePivA = new ToggleServo(intakePivAM, new int[]{15, 25, 130, 215}, Servo.Direction.FORWARD, 25);
-            intakePivB = new ToggleServo(intakePivBM, new int[]{15, 25, 130, 215}, Servo.Direction.REVERSE, 25);
+            intakePivA = new ToggleServo(intakePivAM, new int[]{15, 130, 215}, Servo.Direction.FORWARD, 25);
+            intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE, 25);
         }
         //raise action class for raise method
         public class Raise implements Action {
@@ -188,7 +191,7 @@ public class SampleCollectionAuto extends LinearOpMode {
                 double liftPower = 0.9;
                 leftSlides.setPower(liftPower);
                 rightSlides.setPower(liftPower);
-                sleep(800);
+                sleep(1000);
                 leftSlides.setPower(0);
                 rightSlides.setPower(0);
                 return false;
@@ -227,12 +230,19 @@ public class SampleCollectionAuto extends LinearOpMode {
         TrajectoryActionBuilder driveToSpecimenDrop = drive.actionBuilder(STARTING_POSE)
                 .strafeTo(SPECIMEN_DROP_PRE);
         TrajectoryActionBuilder WAIT = drive.actionBuilder(STARTING_POSE)
-                .waitSeconds(3);
+                .waitSeconds(1);
 
         TrajectoryActionBuilder moveBack= drive.actionBuilder(new Pose2d(SPECIMEN_DROP.x, SPECIMEN_DROP.y, STARTING_POSE.heading.toDouble()))
                 .strafeTo(new Vector2d(-45, 0));
-        TrajectoryActionBuilder specPose = drive.actionBuilder(new Pose2d(SPECIMEN_DROP_PRE.x, SPECIMEN_DROP_PRE.y, Math.toRadians(180)))
+        TrajectoryActionBuilder specPose = drive.actionBuilder(new Pose2d(SPECIMEN_DROP_PRE.x, SPECIMEN_DROP_PRE.y, Math.toRadians(0)))
                 .strafeTo(SPECIMEN_DROP);
+
+        TrajectoryActionBuilder specPosePostPush1 = drive.actionBuilder(new Pose2d(GRAB_POS_POST.x, GRAB_POS_POST.y, Math.toRadians(0)))
+                .splineToConstantHeading(new Vector2d(-53.4, -1), Math.toRadians(20));
+
+        TrajectoryActionBuilder specPosePostPush1Post = specPosePostPush1.fresh()
+                .splineToConstantHeading(new Vector2d(-51, -1), Math.toRadians(20));
+
         TrajectoryActionBuilder smallWait = drive.actionBuilder(STARTING_POSE)
                 .waitSeconds(0.5);
         // Build the entire action sequence
@@ -256,8 +266,10 @@ public class SampleCollectionAuto extends LinearOpMode {
                 .strafeToConstantHeading(SAMPLE_3_PRE)
                 .splineToConstantHeading(SAMPLE_3, Math.toRadians(0))
                 .strafeTo(HUMAN_ZONE_3)
-                .splineToConstantHeading(GRAB_POS, Math.toRadians(0))
-                .waitSeconds(5);
+
+                .strafeToConstantHeading(GRAB_POS)
+                .strafeToConstantHeading(GRAB_POS_POST);
+
         VerticalSlides vslides = new VerticalSlides(hardwareMap);
         Claw claw = new Claw(hardwareMap);
         //claw.toggle
@@ -270,8 +282,7 @@ public class SampleCollectionAuto extends LinearOpMode {
                 new SequentialAction(
                         pivot.drop(),
                         pivot.drop(),
-                        pivot.drop(),
-                        claw.toggle()
+                        pivot.drop()
                 )
         );
         waitForStart();
@@ -283,6 +294,9 @@ public class SampleCollectionAuto extends LinearOpMode {
         Action waitTraj = WAIT.build();
         Action smallWaitTraj = smallWait.build();
         Action specPoseTraj = specPose.build();
+        Action specPosePostPush1Traj = specPosePostPush1.build();
+
+        Action specPosePostPush1PostTraj = specPosePostPush1Post.build();
         Action moveBackTraj = moveBack.build();
         //arm.rightToggle, arm.leftToggle
         // TODO: Set lift to specimen height
@@ -300,22 +314,29 @@ public class SampleCollectionAuto extends LinearOpMode {
                         startTraj,
                         vslides.raise(),
                         specPoseTraj,
-                        arm.rightToggle(),
-                        vslides.drop(),
-                        waitTraj,
-                        pivot.drop(),
-                        waitTraj,
+                        smallWaitTraj,
                         claw.toggle(),
-                        waitTraj,
+                        vslides.drop(),
+                        smallWaitTraj,
+                        new ParallelAction(
+                        pivot.raise(),
+                        pivot.raise(),
                         moveBackTraj,
                         arm.leftToggle(),
                         arm.leftToggle()
-
-//                        startTraj,
-//                        vslides.raise(),
-//                        pivot.raise(),
-//                        vslides.drop(),
-//                        pushTraj
+                        ),
+                        pushTraj,
+                        claw.toggle(),
+                        waitTraj,
+                        pivot.drop(),
+                        pivot.drop(),
+                        arm.rightToggle(),
+                        arm.rightToggle(),
+                        specPosePostPush1Traj,
+                        vslides.raise(),
+                        specPosePostPush1PostTraj,
+                        smallWaitTraj,
+                        claw.toggle()
                 )
         );
         // Throughout the sequence, you'll need to add your intake/lift controls
