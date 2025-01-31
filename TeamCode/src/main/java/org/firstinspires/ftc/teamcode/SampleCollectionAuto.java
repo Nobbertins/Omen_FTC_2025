@@ -238,7 +238,7 @@ public class SampleCollectionAuto extends LinearOpMode {
                 .strafeTo(new Vector2d(-40, 0));
 
         TrajectoryActionBuilder specPosePostPush1 = drive.actionBuilder(new Pose2d(GRAB_POS_POST.x, GRAB_POS_POST.y, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(-51, -1), Math.toRadians(30));
+                .splineToConstantHeading(new Vector2d(-50.5, -1), Math.toRadians(40));
 
         TrajectoryActionBuilder specPosePostPush1Post = specPosePostPush1.fresh()
                 .strafeTo(new Vector2d(-44.5 , -1));
@@ -333,9 +333,9 @@ public class SampleCollectionAuto extends LinearOpMode {
                         pivot.drop(),
                         pivot.drop(),
                         arm.rightToggle(),
-                        arm.rightToggle(),
-                        specPosePostPush1Traj
+                        arm.rightToggle()
                         ),
+                        specPosePostPush1Traj,
                         vslides.raise(),
                         specPosePostPush1PostTraj,
                         waitTraj,
