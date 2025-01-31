@@ -27,12 +27,12 @@ public class SampleCollectionAuto extends LinearOpMode {
     private static final Pose2d STARTING_POSE = new Pose2d(-64, 0, Math.toRadians(0));
     // Sample positions (adjust these based on your field measurements)
     private static final Vector2d SPECIMEN_DROP = new Vector2d(-44, 0);
-    private static final Vector2d SPECIMEN_DROP_PRE = new Vector2d(-46.4, 0);
+    private static final Vector2d SPECIMEN_DROP_PRE = new Vector2d(-46.5, 0);
     private static final Vector2d afterSPECIMEN_DROP = new Vector2d(-51, -26);
     private static final Vector2d SAMPLE_1_PRE = new Vector2d(-34, -36);
     private static final Vector2d SAMPLE_1= new Vector2d(-15, -45);
     private static final Vector2d SAMPLE_2_PRE = new Vector2d(-15, -44);
-    private static final Vector2d SAMPLE_2 = new Vector2d(-15, -52);
+    private static final Vector2d SAMPLE_2 = new Vector2d(-15, -54);
     private static final Vector2d SAMPLE_3_PRE = new Vector2d(-15, -51);
     private static final Vector2d SAMPLE_3 = new Vector2d(-15, -61);
     private static final Vector2d HUMAN_ZONE_1 = new Vector2d(-59, -45);
@@ -188,7 +188,7 @@ public class SampleCollectionAuto extends LinearOpMode {
         public class Raise implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double liftPower = 0.9;
+                double liftPower = 0.8;
                 leftSlides.setPower(liftPower);
                 rightSlides.setPower(liftPower);
                 sleep(1000);
@@ -235,13 +235,13 @@ public class SampleCollectionAuto extends LinearOpMode {
         TrajectoryActionBuilder moveBack= drive.actionBuilder(new Pose2d(SPECIMEN_DROP.x, SPECIMEN_DROP.y, STARTING_POSE.heading.toDouble()))
                 .strafeTo(new Vector2d(-45, 0));
         TrajectoryActionBuilder specPose = drive.actionBuilder(new Pose2d(SPECIMEN_DROP_PRE.x, SPECIMEN_DROP_PRE.y, Math.toRadians(0)))
-                .strafeTo(SPECIMEN_DROP);
+                .strafeTo(new Vector2d(-40, 0));
 
         TrajectoryActionBuilder specPosePostPush1 = drive.actionBuilder(new Pose2d(GRAB_POS_POST.x, GRAB_POS_POST.y, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(-53.4, -1), Math.toRadians(20));
+                .splineToConstantHeading(new Vector2d(-51, -1), Math.toRadians(30));
 
         TrajectoryActionBuilder specPosePostPush1Post = specPosePostPush1.fresh()
-                .splineToConstantHeading(new Vector2d(-51, -1), Math.toRadians(20));
+                .strafeTo(new Vector2d(-44.5 , -1));
 
         TrajectoryActionBuilder smallWait = drive.actionBuilder(STARTING_POSE)
                 .waitSeconds(0.5);
@@ -314,7 +314,7 @@ public class SampleCollectionAuto extends LinearOpMode {
                         startTraj,
                         vslides.raise(),
                         specPoseTraj,
-                        smallWaitTraj,
+                        waitTraj,
                         claw.toggle(),
                         vslides.drop(),
                         smallWaitTraj,
@@ -326,16 +326,19 @@ public class SampleCollectionAuto extends LinearOpMode {
                         arm.leftToggle()
                         ),
                         pushTraj,
+                        vslides.drop(),
                         claw.toggle(),
                         waitTraj,
+                        new ParallelAction(
                         pivot.drop(),
                         pivot.drop(),
                         arm.rightToggle(),
                         arm.rightToggle(),
-                        specPosePostPush1Traj,
+                        specPosePostPush1Traj
+                        ),
                         vslides.raise(),
                         specPosePostPush1PostTraj,
-                        smallWaitTraj,
+                        waitTraj,
                         claw.toggle()
                 )
         );
