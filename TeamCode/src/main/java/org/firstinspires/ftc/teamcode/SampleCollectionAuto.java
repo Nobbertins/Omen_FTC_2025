@@ -19,28 +19,32 @@ import com.qualcomm.robotcore.hardware.Servo;
 import androidx.annotation.NonNull;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.sun.tools.javac.util.GraphUtils;
 
 @Config
 @Autonomous(name = "Sample Collection Auto")
 public class SampleCollectionAuto extends LinearOpMode {
+    //start timer
+    private ElapsedTime runtime = new ElapsedTime();
     // Define your robot's starting position
     private static final Pose2d STARTING_POSE = new Pose2d(-64, 0, Math.toRadians(0));
     // Sample positions (adjust these based on your field measurements)
-    private static final Vector2d SPECIMEN_DROP = new Vector2d(-44, 0);
-    private static final Vector2d SPECIMEN_DROP_PRE = new Vector2d(-46.5, 0);
+    private static final Vector2d SPECIMEN_DROP = new Vector2d(-46.2, 0);
+    private static final Vector2d SPECIMEN_DROP_PRE = new Vector2d(-48.3, 0);
     private static final Vector2d afterSPECIMEN_DROP = new Vector2d(-51, -26);
-    private static final Vector2d SAMPLE_1_PRE = new Vector2d(-34, -36);
-    private static final Vector2d SAMPLE_1= new Vector2d(-15, -45);
+    private static final Vector2d SAMPLE_1_PRE = new Vector2d(-34, -34);
+    private static final Vector2d SAMPLE_1= new Vector2d(-15, -39);
     private static final Vector2d SAMPLE_2_PRE = new Vector2d(-15, -44);
     private static final Vector2d SAMPLE_2 = new Vector2d(-15, -54);
     private static final Vector2d SAMPLE_3_PRE = new Vector2d(-15, -51);
-    private static final Vector2d SAMPLE_3 = new Vector2d(-15, -61);
-    private static final Vector2d HUMAN_ZONE_1 = new Vector2d(-59, -45);
-    private static final Vector2d HUMAN_ZONE_2 = new Vector2d(-59, -52);
-    private static final Vector2d HUMAN_ZONE_3 = new Vector2d(-59, -60);
+    private static final Vector2d SAMPLE_3 = new Vector2d(-15, -62);
+    private static final Vector2d HUMAN_ZONE_1 = new Vector2d(-53, -45);
+    private static final Vector2d HUMAN_ZONE_2 = new Vector2d(-53, -52);
+    private static final Vector2d HUMAN_ZONE_3 = new Vector2d(-50, -62);
 
     private static final Vector2d GRAB_POS = new Vector2d(-59, -42);
-    private static final Vector2d GRAB_POS_POST = new Vector2d(-62, -42);
+    private static final Vector2d GRAB_POS_POST = new Vector2d(-63.5, -42);
     //pivot class with raise and drop methods
     public class Arm{
         private ToggleServo rArm = null;
@@ -101,6 +105,26 @@ public class SampleCollectionAuto extends LinearOpMode {
         //raise method for easy calls
         public Action toggle() {
             return new ToggleClaw();
+        }
+    }
+
+    public class HLock{
+        private ToggleServo hlock = null;
+        public HLock(HardwareMap hardwareMap){
+            Servo hlockMotor = hardwareMap.get(Servo.class, "hlock");
+            hlock = new ToggleServo(hlockMotor, new int[]{120, 40}, Servo.Direction.REVERSE, 120);
+        }
+        //raise action class for raise method
+        public class Toggle implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                hlock.toggle();
+                return false;
+            }
+        }
+        //raise method for easy calls
+        public Action toggle() {
+            return new Toggle();
         }
     }
     public class Pivot{
@@ -180,6 +204,7 @@ public class SampleCollectionAuto extends LinearOpMode {
     public class VerticalSlides{
         private DcMotor rightSlides = null;
         private DcMotor leftSlides = null;
+
         public VerticalSlides(HardwareMap hardwareMap){
             leftSlides  = hardwareMap.get(DcMotor.class, "lslides");
             rightSlides  = hardwareMap.get(DcMotor.class, "rslides");
@@ -188,12 +213,9 @@ public class SampleCollectionAuto extends LinearOpMode {
         public class Raise implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double liftPower = 0.8;
+                double liftPower = 0.9;
                 leftSlides.setPower(liftPower);
                 rightSlides.setPower(liftPower);
-                sleep(1000);
-                leftSlides.setPower(0);
-                rightSlides.setPower(0);
                 return false;
             }
         }
@@ -201,11 +223,23 @@ public class SampleCollectionAuto extends LinearOpMode {
         public Action raise() {
             return new Raise();
         }
+        public class Stop implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                leftSlides.setPower(0);
+                rightSlides.setPower(0);
+                return false;
+            }
+        }
+        //raise method for easy calls
+        public Action stop() {
+            return new Stop();
+        }
         //drop action class for drop method
         public class Drop implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                double dropPower = -0.7;
+                double dropPower = -0.5;
                 leftSlides.setPower(dropPower);
                 rightSlides.setPower(dropPower);
                 sleep(600);
@@ -235,37 +269,40 @@ public class SampleCollectionAuto extends LinearOpMode {
         TrajectoryActionBuilder moveBack= drive.actionBuilder(new Pose2d(SPECIMEN_DROP.x, SPECIMEN_DROP.y, STARTING_POSE.heading.toDouble()))
                 .strafeTo(new Vector2d(-45, 0));
         TrajectoryActionBuilder specPose = drive.actionBuilder(new Pose2d(SPECIMEN_DROP_PRE.x, SPECIMEN_DROP_PRE.y, Math.toRadians(0)))
-                .strafeTo(new Vector2d(-40, 0));
+                .strafeTo(SPECIMEN_DROP);
 
         TrajectoryActionBuilder specPosePostPush1 = drive.actionBuilder(new Pose2d(GRAB_POS_POST.x, GRAB_POS_POST.y, Math.toRadians(0)))
-                .splineToConstantHeading(new Vector2d(-50.5, -1), Math.toRadians(40));
+                .splineToConstantHeading(new Vector2d(-55, -1), Math.toRadians(60));
 
         TrajectoryActionBuilder specPosePostPush1Post = specPosePostPush1.fresh()
-                .strafeTo(new Vector2d(-44.5 , -1));
+                .strafeTo(new Vector2d(-50.3 , -1));
 
         TrajectoryActionBuilder smallWait = drive.actionBuilder(STARTING_POSE)
-                .waitSeconds(0.5);
+                .waitSeconds(0.25);
+        TrajectoryActionBuilder grabPosTwo = specPosePostPush1Post.fresh()
+                .splineToConstantHeading(GRAB_POS, Math.toRadians(0))
+                .strafeToConstantHeading(GRAB_POS_POST);
         // Build the entire action sequence
         TrajectoryActionBuilder pushSequence = drive.actionBuilder(new Pose2d(SPECIMEN_DROP.x, SPECIMEN_DROP.y, STARTING_POSE.heading.toDouble()))
                 // Move to specimen drop
 
-                .strafeToLinearHeading(afterSPECIMEN_DROP, Math.toRadians(0))
+                .splineToConstantHeading(afterSPECIMEN_DROP, Math.toRadians(0))
                 .splineToConstantHeading(SAMPLE_1_PRE, Math.toRadians(0))
                 // Move to first sample
                 .splineToConstantHeading(SAMPLE_1, Math.toRadians(0))
 
                 // Move to bucket
-                .strafeTo(HUMAN_ZONE_1)
+                .splineToConstantHeading(HUMAN_ZONE_1, Math.toRadians(0))
                 // Move to second sample
-                .strafeToConstantHeading(SAMPLE_2_PRE)
+                .splineToConstantHeading(SAMPLE_2_PRE, Math.toRadians(0))
                 .splineToConstantHeading(SAMPLE_2, Math.toRadians(0)) // Time for intake
 
-                .strafeTo(HUMAN_ZONE_2)
+                .splineToConstantHeading(HUMAN_ZONE_2, Math.toRadians(0))
                 // Back to bucket
 
-                .strafeToConstantHeading(SAMPLE_3_PRE)
+                .splineToConstantHeading(SAMPLE_3_PRE, Math.toRadians(0))
                 .splineToConstantHeading(SAMPLE_3, Math.toRadians(0))
-                .strafeTo(HUMAN_ZONE_3)
+                .splineToConstantHeading(HUMAN_ZONE_3, Math.toRadians(0))
 
                 .strafeToConstantHeading(GRAB_POS)
                 .strafeToConstantHeading(GRAB_POS_POST);
@@ -276,6 +313,7 @@ public class SampleCollectionAuto extends LinearOpMode {
         Pivot pivot = new Pivot(hardwareMap);
         //pivot.raise, pivot.drop
         Arm arm = new Arm(hardwareMap);
+        HLock hlock = new HLock(hardwareMap);
         IntakePivot intakePiv = new IntakePivot(hardwareMap);
 
         Actions.runBlocking(
@@ -286,7 +324,7 @@ public class SampleCollectionAuto extends LinearOpMode {
                 )
         );
         waitForStart();
-
+        runtime.reset();
         if (isStopRequested()) return;
         Action startTraj = driveToSpecimenDrop.build();
         Action pushTraj = pushSequence.build();
@@ -305,16 +343,24 @@ public class SampleCollectionAuto extends LinearOpMode {
                 new SequentialAction(
                         pivot.raise(),
                         smallWaitTraj,
+                        smallWaitTraj,
                         intakePiv.drop(),
                         intakePiv.drop(),
+                        smallWaitTraj,
                         smallWaitTraj,
                         arm.rightToggle(),
                         arm.rightToggle(),
                         pivot.drop(),
                         startTraj,
-                        vslides.raise(),
+                        new ParallelAction(
                         specPoseTraj,
+                        vslides.raise()),
                         waitTraj,
+                        smallWaitTraj,
+                        smallWaitTraj,
+                        vslides.stop(),
+                        smallWaitTraj,
+                        smallWaitTraj,
                         claw.toggle(),
                         vslides.drop(),
                         smallWaitTraj,
@@ -336,10 +382,32 @@ public class SampleCollectionAuto extends LinearOpMode {
                         arm.rightToggle()
                         ),
                         specPosePostPush1Traj,
-                        vslides.raise(),
-                        specPosePostPush1PostTraj,
+                        new ParallelAction(
+                                specPosePostPush1PostTraj,
+                        vslides.raise()
+                                ),
                         waitTraj,
-                        claw.toggle()
+                        waitTraj,
+                        smallWaitTraj,
+                        smallWaitTraj,
+                        vslides.stop(),
+                        waitTraj,
+                        claw.toggle(),
+                        vslides.drop(),
+                        grabPosTwo.build(),
+                        specPosePostPush1Traj,
+                        new ParallelAction(
+                                specPosePostPush1PostTraj,
+                                vslides.raise()
+                        ),
+                        waitTraj,
+                        waitTraj,
+                        smallWaitTraj,
+                        smallWaitTraj,
+                        vslides.stop(),
+                        waitTraj,
+                        claw.toggle(),
+                        vslides.drop()
                 )
         );
         // Throughout the sequence, you'll need to add your intake/lift controls
