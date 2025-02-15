@@ -67,7 +67,8 @@ public class BasicTelop extends LinearOpMode {
     private Servo rarmM = null;
     private Servo elbowM = null;
     private Servo clawM = null;
-
+    private CRServo lhang = null;
+    private CRServo rhang = null;
 
 
     @Override
@@ -94,7 +95,8 @@ public class BasicTelop extends LinearOpMode {
         rarmM = hardwareMap.get(Servo.class, "rarm");
         elbowM = hardwareMap.get(Servo.class, "elbow");
         clawM = hardwareMap.get(Servo.class, "claw");
-
+        lhang = hardwareMap.get(CRServo.class, "lhang");
+        rhang = hardwareMap.get(CRServo.class, "rhang");
         //initialize motor directions
         leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
@@ -103,6 +105,9 @@ public class BasicTelop extends LinearOpMode {
         intakeMotor.setDirection(DcMotor.Direction.FORWARD);
         rslidesMotor.setDirection(DcMotor.Direction.FORWARD);
         lslidesMotor.setDirection(DcMotor.Direction.FORWARD);
+
+
+        lhang.setDirection(CRServo.Direction.REVERSE);
         Encoder par1 = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "fr")));
         Encoder perp = new OverflowEncoder(new RawEncoder(hardwareMap.get(DcMotorEx.class, "br")));
        hslidesMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -112,15 +117,14 @@ public class BasicTelop extends LinearOpMode {
         //initialize toggle servos (servos that go between angles at the press of a button)
         sleep(10);
 
-        //remeber to reccoment in 130 for start state for pivot I just took it out cause I was working on arms exclusively
         ToggleServo intakePivA = new ToggleServo(intakePivAM, new int[]{15, 130, 215}, Servo.Direction.FORWARD);
         ToggleServo intakePivB = new ToggleServo(intakePivBM, new int[]{15, 130, 215}, Servo.Direction.REVERSE);
         ToggleServo hlock = new ToggleServo(hlockM, new int[]{120, 40}, Servo.Direction.REVERSE);
-        ToggleServo larm = new ToggleServo(larmM, new int[]{20, 65, 230, 220, 220}, Servo.Direction.FORWARD, 20);
-        ToggleServo rarm = new ToggleServo(rarmM, new int[]{20, 65, 230, 220, 220}, Servo.Direction.REVERSE, 20);
-        ToggleServo elbow = new ToggleServo(elbowM, new int[]{10, 135, 0, 100, 210}, Servo.Direction.REVERSE, 10);
-        ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 45, 60}, Servo.Direction.FORWARD, 0);
-        ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 45, 60}, Servo.Direction.REVERSE, 0);
+        ToggleServo larm = new ToggleServo(larmM, new int[]{20, 80, 280, 250, 230}, Servo.Direction.FORWARD, 20);
+        ToggleServo rarm = new ToggleServo(rarmM, new int[]{20, 80, 280, 250, 230}, Servo.Direction.REVERSE, 20);
+        ToggleServo elbow = new ToggleServo(elbowM, new int[]{10, 130, 0, 100, 210}, Servo.Direction.REVERSE, 10);
+        ToggleServo rpivot = new ToggleServo(rpivotM, new int[]{0, 55}, Servo.Direction.FORWARD, 0);
+        ToggleServo lpivot = new ToggleServo(lpivotM, new int[]{0, 55}, Servo.Direction.REVERSE, 0);
         ToggleServo claw = new ToggleServo(clawM, new int[]{2, 200}, Servo.Direction.REVERSE, 2);
         ToggleServo transfer = new ToggleServo(transferM, new int[]{0, 90}, Servo.Direction.FORWARD, 2);
         //elbow 150, 100, 85, 360
@@ -180,9 +184,9 @@ public class BasicTelop extends LinearOpMode {
         while (opModeIsActive()) {
             double max;
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y*.8;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x*.8;
-            double yaw     =  gamepad1.right_stick_x*.8;
+            double axial   = -gamepad1.left_stick_y*.95;  // Note: pushing stick forward gives negative value
+            double lateral =  gamepad1.left_stick_x*.95;
+            double yaw     =  gamepad1.right_stick_x*.95;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -230,9 +234,22 @@ public class BasicTelop extends LinearOpMode {
             if(gamepad1.left_bumper && !lb1Pressed) intakeDirection *= -1;
             if(gamepad1.right_bumper && !rb1Pressed) {
                 intakeOn = !intakeOn;
-                if(transfer.pos != 0) transfer.toggle();
+                intakeDirection = -1;
+//                if(transfer.pos != 0) transfer.toggle();
             }
 
+            if(gamepad2.right_bumper && !rb2Pressed){
+                lhang.setPower(1);
+                rhang.setPower(1);
+            }
+            if(gamepad2.left_bumper && !rb2Pressed){
+                lhang.setPower(0);
+                rhang.setPower(0);
+            }
+            if(gamepad2.left_trigger > 0.1 && gamepad2.right_trigger > 0.1){
+                lhang.setPower(-1);
+                rhang.setPower(-1);
+            }
             if(intakeOn){
                 intakeMotor.setPower(intakeDirection < 0 ? intakeDirection * intakeSpeed : intakeDirection * 0.6);
             }
@@ -269,10 +286,28 @@ public class BasicTelop extends LinearOpMode {
             if(gamepad2.dpad_up && !up2Pressed) {
                 lpivot.toggleRight();
                 rpivot.toggleRight();
+                if(larm.pos > 2 && rarm.pos > 2) {
+                    while (larm.pos != 2) {
+                        larm.toggleLeft();
+                        rarm.toggleLeft();
+                    }
+                }
+                if(larm.pos < 2 && rarm.pos < 2) {
+                    while (larm.pos != 2) {
+                        larm.toggleRight();
+                        rarm.toggleRight();
+                    }
+                }
             }
             if(gamepad2.dpad_down && !down2Pressed) {
                 rpivot.toggleLeft();
                 lpivot.toggleLeft();
+                if(larm.pos > 0 && rarm.pos > 0) {
+                    while (larm.pos != 0) {
+                        larm.toggleLeft();
+                        rarm.toggleLeft();
+                    }
+                }
             }
 
             //update all button states
