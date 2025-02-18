@@ -455,7 +455,7 @@ public class SampleAuto extends LinearOpMode {
         TrajectoryActionBuilder collectSequence1 = driveToSpecimenDrop.fresh()
                 // Move to specimen drop
                 // Move to first sample
-                .strafeToLinearHeading(new Vector2d(-51.7, 53.7), Math.toRadians(338.5))
+                .strafeToLinearHeading(new Vector2d(-52, 53.7), Math.toRadians(338.5))
                 .afterTime(0, hlock.toggle())
                 .afterTime(0.05, new ParallelAction(hslides.extend(), intakePiv.drop(), intakePiv.drop(), intakePiv.drop()))
                 .afterTime(0.25, new SequentialAction(arm.leftToggle(), arm.leftToggle(), hslides.stop(), intake.In()))
@@ -470,7 +470,7 @@ public class SampleAuto extends LinearOpMode {
                 .afterTime(2.7, new ParallelAction(claw.toggle()));
 
         TrajectoryActionBuilder collectSeq2 = collectSequence1.fresh()
-                .strafeToLinearHeading(new Vector2d(-54.2, 53.7), Math.toRadians(337))
+                .strafeToLinearHeading(new Vector2d(-54.7, 53.7), Math.toRadians(337))
                 .afterTime(0.2, vslides.raise())
                 .afterTime(0.4, arm.rightToggle())
                 .afterTime(0.9, new SequentialAction(arm.rightToggle(), arm.rightToggle(), arm.rightToggle()))
@@ -505,7 +505,7 @@ public class SampleAuto extends LinearOpMode {
         TrajectoryActionBuilder collectSequence3 = sampleBack2.fresh()
                 // Move to specimen drop
                 // Move to first sample
-                .strafeToLinearHeading(new Vector2d(-46.7, 52.7), Math.toRadians(18))
+                .strafeToLinearHeading(new Vector2d(-46.7, 49.7), Math.toRadians(40))
                 .afterTime(0, hlock.toggle())
                 .afterTime(0.05, new ParallelAction(hslides.extend(), intakePiv.drop(), intakePiv.drop(), intakePiv.drop(), transfer.toggle()))
                 .afterTime(0.2, new SequentialAction(arm.leftToggle(), arm.leftToggle(), hslides.stop(), intake.In()))

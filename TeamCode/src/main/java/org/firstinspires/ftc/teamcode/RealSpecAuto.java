@@ -481,7 +481,7 @@ public class RealSpecAuto extends LinearOpMode {
                 .afterTime(5.0, intake.stop());
 
         TrajectoryActionBuilder specSequence1 = pushSequence.fresh()
-                .splineToConstantHeading(new Vector2d(-34.8, 5), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(-34.8, 15), Math.toRadians(0))
         .afterTime(0.25, vslides.raise())
                 .afterTime(1.0, vslides.stop())
                 .afterTime(1.2, claw.toggle());
